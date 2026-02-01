@@ -1,5 +1,5 @@
 {
-  "name": "king-of-paddock-front",
+  "name": "@kop/app",
   "version": "0.1.0",
   "private": true,
   "scripts": {

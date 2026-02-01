@@ -7,3 +7,13 @@
 .claude/*local*
 
 # Project
+node_modules/
+package-lock.json
+.pnpm-store/
+
+# Environment
+.env.local
+.env.*.local
+
+# Logs
+*.log
