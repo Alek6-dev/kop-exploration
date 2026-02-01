@@ -38,10 +38,10 @@ final class UserVisitorFixtures extends Fixture
             $user->setEmail($this->faker->email);
             $user->setPseudo('pseudo-'.$this->faker->numberBetween());
             if (0 === $i) {
-                $user->setFirstName('Nova');
-                $user->setLastName('Way');
-                $user->setEmail('user@novaway.fr');
-                $user->setPseudo('novaway-69');
+                $user->setFirstName('User');
+                $user->setLastName('Kop');
+                $user->setEmail('user@kop.fr');
+                $user->setPseudo('kop-69');
             }
             $user->setPassword($this->userPasswordHasher->hashPassword($user, 'password'));
             $user->validate();

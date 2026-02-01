@@ -21,9 +21,9 @@ final class UserAdminFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $admin = new UserAdmin();
-        $admin->setFirstName('Admin Super');
-        $admin->setLastName('Novaway');
-        $admin->setEmail('admin+super@novaway.fr');
+        $admin->setFirstName('Admin');
+        $admin->setLastName('Super');
+        $admin->setEmail('admin+super@kop.fr');
         $admin->setPassword($this->userPasswordHasher->hashPassword($admin, 'password'));
         $admin->setRoles([RoleEnum::ROLE_SUPER_ADMIN->value]);
         $admin->setStatus(StatusEnum::CREATED);

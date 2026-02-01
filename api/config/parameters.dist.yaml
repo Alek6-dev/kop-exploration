@@ -34,5 +34,5 @@ parameters:
     #imagine.file_system_shared_root: /home/demo/public/kop/shared/public
     # .staging configuration
     #imagine.file_system_root: '%kernel.project_dir%/public'
-    #imagine.file_system_shared_root: /var/www/vhosts/staging.novaway.net/kop/shared/public
+    #imagine.file_system_shared_root: /var/www/vhosts/xxx/kop/shared/public
     ###< LiipImagine ###

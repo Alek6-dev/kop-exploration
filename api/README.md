@@ -35,13 +35,11 @@ TODO
 
 ## Environnement
 
-### 🏘️ [Production](https://novaway.fr)
+### 🏘️ [Production](https://xxx.fr)
 
-### 🏠 [Staging](https://novaway.fr)
+### 🏠 [Staging](https://xxx.fr)
 
 ### 🏚️ [Demo](https://kop.novademo.net/)
-
-Un [détail et un historique de chaque environnement](https://gitlab.novaway.net/novaproject/kop/-/environments) est disponible sur Gitlab (`Operations->Environment`).
 
 ## Architecture
 
@@ -53,7 +51,7 @@ L'API repose sur ApiPlatform. les données sont rendues en REST.
 
 #### DDD
 
-L'architecture repose, comme tous les projets Novaway, sur une architecture DDD. 
+L'architecture repose sur une architecture DDD. 
 Ici, le choix a été fait de structurer en feature pour ajouter plus facilement les nouveaux développements au fil des sprints.
 
 #### CQRS
@@ -218,9 +216,9 @@ Lancement des containers Docker
 
 #### Administrateurs
 
-| Rôle                 | Commentaire            | Email                     | Mot de passe |
-|----------------------|------------------------|---------------------------|--------------|
-| Super Administrateur | Tous les droits        | admin+super@novaway.fr    | password     |
+| Rôle                 | Commentaire            | Email              | Mot de passe |
+|----------------------|------------------------|--------------------|--------------|
+| Super Administrateur | Tous les droits        | admin+super@kop.fr | password     |
 
 
 #### Certificat SSL (**indispensable pour le lancement de NGINX**)
