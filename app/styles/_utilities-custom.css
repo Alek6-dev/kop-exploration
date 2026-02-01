@@ -1,0 +1,93 @@
+@layer utilities {
+  .flex-centering {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-v-centering {
+    @apply flex items-center;
+  }
+
+  .global-transition {
+    transition: 0.3s ease-in-out;
+  }
+
+  .absolute-centering {
+    @apply absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2;
+  }
+
+  .gradient-white-gray {
+    background-image: theme('colors.gradient-white-gray');
+  }
+
+  .gradient-white-primary {
+    background-image:  theme('colors.gradient-white-primary');
+  }
+
+  .gradient-primary-white {
+    background-image:  theme('colors.gradient-primary-white');
+  }
+
+  .gradient-primary-white-disabled {
+    background-image:  theme('colors.gradient-primary-white-disabled');
+  }
+
+  .gradient-gray-white {
+    background-image: theme('colors.gradient-gray-white');
+  }
+
+  .gradient-gold {
+    background-image: theme('colors.gradient-gold');
+  }
+
+  .gradient-silver {
+    background-image: theme('colors.gradient-silver');
+  }
+
+  .gradient-bronze {
+    background-image: theme('colors.gradient-bronze');
+  }
+
+  .gradient-mask-bottom {
+    background-image: linear-gradient(0deg, #28292B 36%, rgba(40,41,43,0.00) 100%);
+  }
+
+  .svg-white * {
+    fill: theme('colors.white');
+  }
+
+  .svg-primary * {
+    fill: theme('colors.primary');
+  }
+
+  .svg-black * {
+    fill: theme('colors.black');
+  }
+
+  .svg-green * {
+    fill: theme('colors.green');
+  }
+
+  .svg-gray * {
+    fill: theme('colors.gray');
+  }
+
+  .svg-tiny svg {
+    @apply w-2 h-2;
+  }
+
+  .svg-full svg {
+    @apply w-full h-full;
+  }
+
+  .no-delay {
+    animation-delay: 0s !important;
+  }
+}
+
+.gradient-avatar-team {
+  background-image: linear-gradient(135deg, #000000 0%, rgba(0,0,0,0.5) 140%);
+}
+
+.gradient-avatar-driver {
+  background-image: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 140%);
+}

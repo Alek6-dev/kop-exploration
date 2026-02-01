@@ -1,0 +1,42 @@
+.hub-f1 {
+    @apply top-[45%];
+
+    picture {
+      animation: 2s cubic-bezier(0, 0.78, 0.15, 0.97) 0.2s f1Apparition forwards;
+      opacity: 0;
+    }
+
+
+    @media screen and (max-height: 750px) {
+        @apply top-[55%];
+        img {
+            @apply w-[350px];
+        }
+    }
+    @media screen and (max-height: 700px) {
+        @apply top-[60%] translate-x-10;
+        img {
+            @apply w-[300px];
+        }
+    }
+    @media screen and (max-height: 670px) {
+        @apply top-[60%] translate-x-32;
+        img {
+            @apply w-[210px];
+        }
+    }
+}
+
+@keyframes f1Apparition {
+    0% {
+      transform: translate3d(200px, -70px, 0);
+      opacity: 0;
+    }
+    50% {
+      transform: translate3d(30px, -70px, 0)
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(30px, -70px, 0)
+    }
+}

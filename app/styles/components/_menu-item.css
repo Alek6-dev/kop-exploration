@@ -1,0 +1,47 @@
+.menu-item {
+    @apply flex-col flex-centering text-gray h-14 px-2 relative xs:px-1;
+
+    svg {
+      @apply h-4 w-4;
+      path {
+        @apply fill-gray;
+      }
+    }
+
+    &.paddock {
+      svg {
+        @apply h-[22px] w-[22px];
+      }
+
+      span {
+        @apply mt-[6px];
+      }
+    }
+
+    &-quiz {
+      @apply px-3;
+    }
+
+    span {
+      @apply mt-[8px] font-bold text-tiny;
+    }
+
+    &.is-active {
+      @apply text-primary;
+
+      &::after {
+        content: "";
+        @apply absolute -top-[1px] left-0 w-full h-[1px] bg-primary;
+      }
+
+
+      svg path {
+        @apply fill-primary;
+      }
+
+      &::before {
+        content: url('/assets/misc/item-active-bg.svg');
+        @apply absolute-centering w-[118px] h-[69px] block;
+      }
+    }
+}

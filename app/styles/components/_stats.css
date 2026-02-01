@@ -1,0 +1,11 @@
+.stats-item {
+    @apply border-b border-white-6;
+
+    &:nth-child(odd) {
+        @apply border-r;
+    }
+
+    &:nth-last-child(-n+2) {
+        @apply border-b-0;
+    }
+}

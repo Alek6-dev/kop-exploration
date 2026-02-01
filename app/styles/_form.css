@@ -1,0 +1,132 @@
+label, .label {
+  @apply font-bold mb-2 leading-tight;
+
+  span {
+    @apply text-primary;
+  }
+}
+
+input, .input, textarea, .textarea {
+  @apply bg-black/[0.16] border border-white/[0.06] rounded w-full px-4 outline-none hover:border-white/30 focus:border-white/30;
+}
+
+input[type="text"], input[type="password"],  input[type="email"], .input {
+  @apply h-10;
+}
+
+.form-item {
+  @apply flex flex-col w-full mb-5;
+}
+
+.form-error {
+  @apply text-sm text-red mt-1 font-bold;
+}
+
+.custom-radio {
+  input {
+    display: none;
+  }
+
+  .custom-radio-item {
+    @apply flex-1;
+
+    button {
+      display: none;
+    }
+
+    label {
+      @apply bg-[#3B3C3E] flex-centering h-10 rounded relative flex-1 text-white global-transition;
+      transition-property: color;
+
+      &::before {
+        content: "";
+        @apply block absolute -top-[2px] -left-[2px] rounded-[11px] global-transition opacity-0;
+        background-image: linear-gradient(135deg, theme('colors.white') 5%, theme('colors.primary') 80%);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        z-index: -1;
+        box-shadow: 0 0 10px 0 rgba(241,196,69,0.30);
+      }
+
+      .selected-bubble {
+        visibility: hidden;
+      }
+    }
+
+    input:checked + label {
+      background: #27282A;
+      @apply text-primary;
+
+      &::before {
+        @apply opacity-100;
+      }
+
+      .selected-bubble {
+        visibility: visible;
+      }
+    }
+
+    input:disabled + label {
+      & > * {
+        opacity: 0.2;
+      }
+      & > :nth-child(1) {
+        opacity: 1 !important;
+      }
+      img {
+        filter: grayscale();
+      }
+    }
+
+    input:disabled:checked + label {
+      & > * {
+        opacity: 0.6;
+      }
+      &::before, &::after {
+        opacity: 0.5;
+      }
+      img {
+        filter: none;
+      }
+    }
+
+    &-driver label {
+      &::before {
+        @apply rounded-[21px];
+      }
+
+      > div, > span, > img, > b {
+        z-index: 1;
+      }
+
+      &::after {
+        content: "";
+        @apply absolute bottom-0 left-0 w-full h-1/2 block rounded-b-lg bg-no-repeat overflow-hidden;
+        background-size: 200% auto;
+        background-position: top center;
+        background-image: url("data:image/svg+xml,%0A%3Csvg width='141px' height='68px' viewBox='0 0 141 68' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='App' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' fill-opacity='0.0591673951'%3E%3Cg id='Championnat---Stratégie-de-course' transform='translate(-42, -610)' fill='%23FFFFFF'%3E%3Cg id='PILOTES' transform='translate(20, 420)'%3E%3Cg id='Item-/-Pilote' transform='translate(1, 90)'%3E%3Cg id='Usage-restant' transform='translate(21, 100)'%3E%3Cpath d='M0,9.71428571 C23.5,3.23809524 47,0 70.5,0 C94,0 117.5,3.23809524 141,9.71428571 L141,48 C141,59.045695 132.045695,68 121,68 L20,68 C8.954305,68 6.25798147e-15,59.045695 0,48 L0,9.71428571 L0,9.71428571 Z' id='Rectangle'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+    }
+  }
+
+  &-complex label > div {
+    @apply flex items-center justify-start px-4 h-12;
+  }
+}
+
+.input-bid {
+  background-image: url("/assets/icons/money/m.svg");
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  @apply bg-no-repeat border-primary;
+}
+
+.upload-avatar-placeholder {
+  background-image: url('/assets/images/avatar/avatar-generic-200.jpg');
+  background-size: cover;
+  @apply bg-no-repeat;
+}
+
+button.disabled\:opacity-20:disabled {
+  @apply opacity-100;
+}

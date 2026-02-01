@@ -1,0 +1,58 @@
+.strategy-card {
+    @apply w-60 h-98 bg-no-repeat bg-cover relative flex flex-col;
+    background-image: url('/assets/cards/bonus.svg');
+
+    &.disabled {
+        opacity: 0.6;
+    }
+
+    &-combinable {
+        @apply absolute top-0 left-1/2 -translate-x-1/2 px-2 py-[2px] mt-[7px] text-sm rounded-b rounded-sm text-black font-bold;
+    }
+
+    &-icon {
+        @apply h-[146px] flex-centering pt-4;
+    }
+
+    &-title {
+        @apply text-black text-center font-bold text-lg uppercase h-9 flex-centering font-title;
+    }
+
+    &-usage {
+        @apply text-black text-center font-bold text-[13px] uppercase h-[33px] flex-centering font-title;
+    }
+
+    &-text {
+        @apply py-4 px-6 block text-center leading-tight;;
+    }
+
+    &-description {
+        @apply font-bold text-primary text-base mb-4 leading-tight;
+    }
+
+    &-example {
+        @apply text-gray;
+    }
+
+    &-example-title {
+        @apply flex justify-center items-center mb-[8px] font-bold;
+        &::before, &::after {
+            content: "";
+            @apply w-full h-[1px] block relative from-white/50 to-transparent;
+        }
+        &::after {
+            @apply bg-gradient-to-r
+        }
+        &::before {
+            @apply bg-gradient-to-l;
+        }
+    }
+
+    &-button {
+        @apply px-[7px] pb-[8px] mt-auto relative block overflow-hidden;
+        &::before {
+            content: "";
+            @apply absolute bg-primary w-auto h-[2px] block top-0 left-[8px] right-[8px];
+        }
+    }
+}
