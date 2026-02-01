@@ -54,3 +54,9 @@ yarn-error.log
 ###< lexik/jwt-authentication-bundle ###
 
 src/DataFixtures/assets/*
+config/docker/images/nginx/localhost.*
+
+###> docker ###
+php.log
+.bash_history
+###< docker ###

@@ -44,9 +44,9 @@ ENV COMPOSER_HOME /composer
 
 COPY mysql.ini /usr/local/etc/php/conf.d/mysql.ini
 
-ENV HOME /var/www/kop
-WORKDIR $HOME
-RUN chmod a+rwx $HOME
+RUN mkdir -p /home/kop && chmod a+rwx /home/kop
+ENV HOME /home/kop
+WORKDIR /var/www/kop
 
 ENV GOSU_VERSION 1.10
 RUN arch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
@@ -54,7 +54,7 @@ RUN arch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
     && mv ./gosu /usr/local/bin/gosu \
     && chmod +x /usr/local/bin/gosu
 
-RUN sed -i 's/\/proc\/self\/fd\/2/\/var\/www\/kop\/php.log/g' /usr/local/etc/php-fpm.d/docker.conf
+RUN sed -i 's/\/proc\/self\/fd\/2/\/var\/log\/php-fpm.log/g' /usr/local/etc/php-fpm.d/docker.conf
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod a+x /usr/local/bin/entrypoint.sh
