@@ -1,0 +1,56 @@
+###> symfony/framework-bundle ###
+/public/bundles/
+/var/
+/vendor/
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/parameters.yaml
+/config/secrets/prod/prod.decrypt.private.php
+###< symfony/framework-bundle ###
+###> assets ###
+/public/assets/build/
+/node_modules/*
+!/node_modules/.gitkeep
+/public/assets/bundle.*
+/public/assets/bundleAdmin.*
+/public/components/*
+###< assets ###
+
+###> autres ###
+/.idea
+/public/uploads/images/
+###< autres ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+.vscode
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
+
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+
+src/DataFixtures/assets/*

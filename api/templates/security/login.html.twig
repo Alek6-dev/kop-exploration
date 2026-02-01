@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'login.page.title' | trans({}, 'security')}} - {{ parent() }}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block bodyClassName %}mb-0 pb-0{% endblock %}
+
+{% block body %}
+<picture class="absolute left-0 block w-full overflow-hidden top-24 sm:top-0 login-image login-image-animated">
+    <source media="(min-width:640px)" src="{{ asset('assets/images/login/login@2x.jpg') }} 1x, {{ asset('assets/images/login/login@2x.jpg') }} 2x">
+    <source srcset="{{ asset('assets/images/login/login.jpg') }} 1x, {{ asset('assets/images/login/login@2x.jpg') }} 2x">
+    <img src="{{ asset('assets/images/login/login.jpg') }}" class="relative block w-full">
+</picture>
+<video autoplay loop muted class="absolute top-0 left-0 block w-full h-82 mix-blend-plus-lighter login-video">
+    <source src="{{ asset('assets/videos/particles.mp4') }}" type="video/mp4" />
+</video>
+
+<div class="container relative mt-12 mb-6">
+    <img src="{{ asset('assets/images/logos/kop-white.svg') }}" class="block mx-auto login-logo">
+
+    <div class="w-full mt-28 sm:mt-48 zone">
+        <div class="relative flex w-full p-4">
+            <form class="flex flex-col w-full" method="post" >
+                {% include 'components/Form/Input/index.html.twig' with {
+                    label: 'login.form.field.email.label' | trans({}, 'security'),
+                    id: "email",
+                    type: "email",
+                    name: "email",
+                    required: true,
+                    autocomplete: "email",
+                    value: last_username,
+                    placeholder: 'login.form.field.email.placeholder' | trans({}, 'security'),
+                    containerClassName: 'form-item'
+                } %}
+
+                {% include 'components/Link/index.html.twig' with {
+                    label: 'Mot de passe oublié ?',
+                    href: path('app_forgot_password_request'),
+                    className: 'text-sm text-gray font-normal ml-auto -mb-[18px] z-10'
+                } %}
+                {% include 'components/Form/Input/index.html.twig' with {
+                    label: 'login.form.field.password.label' | trans({}, 'security'),
+                    id: "password",
+                    type: "password",
+                    name: "password",
+                    required: true,
+                    autocomplete: "current-password",
+                    placeholder: 'login.form.field.password.placeholder' | trans({}, 'security'),
+                    containerClassName: 'form-item'
+                } %}
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                {% include 'components/Button/index.html.twig' with {
+                    label: 'login.form.submit.label' | trans({}, 'security'),
+                    type: 'submit',
+                    className: 'btn-primary'
+                } %}
+            </form>
+        </div>
+    </div>
+
+    <div class="w-full mt-6 text-center">
+        {% include 'components/Link/index.html.twig' with {
+            label: 'Pas encore de compte ? Inscrivez-vous !',
+            href: path('app_registration_request'),
+            className: 'text-primary'
+        } %}
+    </div>
+
+    <div class="text-sm text-center bg-black text-gray login-legals">
+        En vous connectant, vous acceptez nos <a href="" class="font-normal link">conditions générales d’utilisation</a> ainsi que notre <a href="" class="font-normal link">politique de confidentialité</a>.
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block menu %}{% endblock %}

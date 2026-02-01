@@ -1,0 +1,417 @@
+dashboard:
+    title: 'King of Paddock<br/>Administration'
+    meta_title: 'King of Paddock Administration'
+    export: 'Exporter la liste'
+    statistics:
+        count_users:
+            label: 'Joueurs inscrits'
+        count_championship_active:
+            label: 'Championnats en cours'
+        count_championship_over:
+            label: 'Championnats terminés'
+        count_euros_won:
+            label: 'Euros gagnés avec l''achat de jetons KOP'
+        count_cosmetics_bought:
+            label: 'Cosmétiques achetés'
+    menu:
+        season:
+            section: 'Saisons'
+            crud:
+                index:
+                    title: 'Liste des saisons'
+                detail:
+                    title: 'Fiche de la saison "%season%"'
+                edit:
+                    title: 'Modifier la saison "%season%"'
+                new:
+                    title: 'Ajouter une saison'
+                item:
+                    field:
+                        name:
+                            label: 'Nom'
+                        is_active:
+                            label: 'Saison actuelle ?'
+                        season_races:
+                            label: 'Courses de la saison'
+                        season_teams:
+                            label: 'Ecuries engagées'
+        season_race:
+            crud:
+                item:
+                    field:
+                        date:
+                            label: 'Date'
+                        qualification_date:
+                            label: 'Date de qualification'
+                        sprint_date:
+                            label: 'Date du sprint'
+                        limit_strategy_date:
+                            label: 'Date de fin de stratégie'
+                        laps:
+                            label: 'Nombre de tours'
+                        race:
+                            label: 'Course'
+        season_team:
+            crud:
+                item:
+                    field:
+                        team:
+                            label: 'Ecurie'
+        race:
+            section: 'Courses'
+            crud:
+                index:
+                    title: 'Liste des courses'
+                detail:
+                    title: 'Fiche de la course "%race%"'
+                edit:
+                    title: 'Modifier la course "%race%"'
+                new:
+                    title: 'Ajouter une course'
+                item:
+                    field:
+                        name:
+                            label: 'Nom'
+                        country:
+                            label: 'Pays'
+        driver:
+            section: 'Pilotes'
+            crud:
+                index:
+                    title: 'Liste des pilotes'
+                detail:
+                    title: 'Fiche du pilote "%driver%"'
+                edit:
+                    title: 'Modifier le pilote "%driver%"'
+                new:
+                    title: 'Ajouter un nouveau pilote'
+                item:
+                    field:
+                        first_name:
+                            label: 'Prénom'
+                        last_name:
+                            label: 'Nom'
+                        is_replacement:
+                            label: 'Est remplaçant'
+                        replaced_permanently:
+                            label: 'Est remplacé définitivement'
+                        replaced_by:
+                            label: 'Remplacé par'
+                        team:
+                            label: 'Ecurie'
+                        min_value:
+                            label: 'Valeur'
+                        image:
+                            label: 'Image du pilote'
+                        replacement_date_start:
+                            label: 'Date du début du remplacement'
+                        replacement_date_end:
+                            label: 'Date de fin du remplacement'
+        team:
+            section: 'Ecuries'
+            crud:
+                index:
+                    title: 'Liste des écuries'
+                detail:
+                    title: 'Fiche de l''écurie "%team%"'
+                edit:
+                    title: 'Modifier l''écurie "%team%"'
+                new:
+                    title: 'Ajouter une nouvelle écurie'
+                item:
+                    field:
+                        name:
+                            label: 'Nom'
+                        min_value:
+                            label: 'Valeur'
+                        image:
+                            label: 'Image de l''écurie'
+                        drivers:
+                            label: 'Pilotes de l''écurie'
+        cosmetic:
+            section: 'Cosmétiques'
+            crud:
+                index:
+                    title: 'Liste des cosmétiques'
+                detail:
+                    title: 'Fiche du cosmétique "%cosmetic%"'
+                edit:
+                    title: 'Modifier le cosmétique "%cosmetic%"'
+                new:
+                    title: 'Ajouter un nouveau cosmétique'
+                item:
+                    field:
+                        name:
+                            label: 'Nom'
+                        description:
+                            label: 'Description'
+                        price:
+                            label: 'Prix'
+                        type:
+                            label: 'Type de cosmétique'
+                        color:
+                            label: 'Couleur du fond'
+                        image1:
+                            label: 'Image de face'
+                        image2:
+                            label: 'Image de profil'
+                        is_default:
+                            label: 'Cosmétique par défaut ?'
+                button:
+                    import:
+                        label: 'Importer'
+        credit_pack:
+            section: 'Pack de crédits'
+            crud:
+                index:
+                    title: 'Liste des packs'
+                detail:
+                    title: 'Fiche du pack de  "%credit_pack%" crédits'
+                edit:
+                    title: 'Modifier le pack de "%credit_pack%" crédits'
+                item:
+                    field:
+                        credit:
+                            label: 'Nombre de crédits'
+                        price:
+                            label: 'Prix'
+                        message:
+                            label: 'Message'
+                        product_id:
+                            label: 'Identifiant du pack dans Stripe'
+        bonus:
+            section: 'Bonus'
+            crud:
+                index:
+                    title: 'Liste des bonus'
+                detail:
+                    title: 'Fiche du bonus "%bonus%"'
+                edit:
+                    title: 'Modifier le bonus "%bonus%"'
+                item:
+                    field:
+                        name:
+                            label: 'Name'
+                        description:
+                            label: 'Description'
+                        example:
+                            label: 'Exemple'
+                        icon:
+                            label: 'Icône'
+                        price:
+                            label: 'Coût'
+                        type:
+                            label: 'Type d''application'
+                            value:
+                                strategy: 'GP'
+                                duel: 'Duel'
+                        target_type:
+                            label: 'Type de cible'
+                            value:
+                                self: 'Soi-même'
+                                player: 'Joueur'
+                        sub_target_type:
+                            label: 'Entité cible'
+                            value:
+                                driver1: 'Pilote 1'
+                                driver2: 'Pilote 2'
+                                team: 'Team'
+#                                    TODO: Available in v2
+#                                drivers: 'Pilote 1 & 2'
+                        attribute:
+                            label: 'Catégorie de point visée'
+                            value:
+#                                TODO: Available in v2
+#                                driver_qualification: 'Point qualification du pilote'
+#                                driver_race: 'Point course du pilote'
+#                                driver_sprint: 'Point sprint du pilote'
+#                                driver_position_gain: 'Gain de position du pilote'
+                                driver_score: 'Performance du pilote'
+                                team_multiplier: 'Multiplicateur d''équipe'
+                        operation:
+                            label: 'Opération à appliquer'
+                            value:
+                                minus: '-'
+                                plus: '+'
+                                multiplier: 'x'
+                                divide: '/'
+#                                    TODO: Available in v2
+#                                last_position: 'Dernière position'
+#                                inversion: 'Inversion des pilotes'
+#                                position_equal: 'Postion égale à'
+#                                copy: 'Copie la valeur du joueur'
+#                                gap: 'Ecart avec la position'
+#                                steal: 'Vole la valeur de la cible'
+                        value:
+                            label: 'Valeur'
+#                        TODO: Available in v2
+#                        is_joker:
+#                            label: 'Est un joker ?'
+                        is_enabled:
+                            label: 'Activé ?'
+                        cumulative_times:
+                            label: 'Nombre de fois maximum ou le bonus peut être appliqué à un joueur'
+                            help: 'Vide si pas de limite'
+                        sort:
+                            label: 'Ordre d''application'
+                            help: 'Plus la valeur est basse, plus le bonus est prioritaire'
+        result:
+            section: 'Résultats des courses'
+            crud:
+                index:
+                    title: 'Liste des résultats'
+                detail:
+                    title: 'Fiche des résultats "%result%"'
+                item:
+                    field:
+                        driver:
+                            label: 'Pilote'
+                        team:
+                            label: 'Ecurie'
+                        season:
+                            label: 'Saison'
+                        race:
+                            label: 'Course'
+                        type:
+                            label: 'Type de course'
+                        result_laps:
+                            label: 'Résultat par tour'
+                        created_at:
+                            label: 'Date d''import'
+                error:
+                    remove:
+                        result: 'Les résultats pour la course %race% de la saison %season% n''ont pas pu être supprimés.'
+                        generate_performance: 'Les performances des championnats n''ont pas pu être importées.'
+                    performance_already_generated: 'Les performances des championnats ont déjà été générées.'
+                    sprint_missing: 'Les résultats pour la course %race% de la saison %season% doivent avoir des résultats de sprint.'
+                success:
+                    import: 'Les résultats ont bien été importés.'
+                    remove: 'Les résultats pour le Grand prix %race% de la saison %season% ont été supprimés.'
+                    generate_performance: 'Les performances des championnats ont été importées.'
+                button:
+                    import:
+                        label: 'Créer et Importer des résultats'
+                    remove:
+                        label: 'Supprimer ces résultats'
+                    generate_performance:
+                        label: 'Générer les résultats des championnats'
+        user:
+            section: 'Utilisateurs'
+            crud:
+                index:
+                    title: 'Liste des utilisateurs'
+                edit:
+                    title: 'Modifier l''utilisateur "%user%"'
+                detail:
+                    title: 'Fiche de l''utilisateur "%user%"'
+                item:
+                    field:
+                        first_name:
+                            label: 'Prénom'
+                        last_name:
+                            label: 'Nom'
+                        email:
+                            label: 'Email'
+                        pseudo:
+                            label: 'Pseudo'
+                        status:
+                            label: 'Statut'
+                        created_at:
+                            label: 'Date de création'
+                filter:
+                    status:
+                        label: 'Statut'
+                button:
+                    confirm_user:
+                        label: 'Valider l''inscription'
+                error:
+                    confirm:
+                        label: 'L''utilisateur %pseudo% n''a pas pu être validé.'
+
+        admin:
+            section: 'Administrateurs'
+            crud:
+                index:
+                    title: 'Liste des adminstrateurs'
+                edit:
+                    title: 'Modifier l''administrateur "%admin%"'
+                detail:
+                    title: 'Fiche de l''administrateur "%admin%"'
+                item:
+                    field:
+                        first_name:
+                            label: 'Prénom'
+                        last_name:
+                            label: 'Nom'
+                        email:
+                            label: 'Email'
+                        status:
+                            label: 'Statut'
+                        role:
+                            label: 'Role'
+                filter:
+                    status:
+                        label: 'Statut'
+        parameter:
+            section: 'Paramètres'
+            crud:
+                index:
+                    title: 'Paramètres de l''application'
+                edit:
+                    title: 'Modifier le paramètre %label%'
+                detail:
+                    title: 'Fiche du paramètre %label%'
+                item:
+                    field:
+                        label:
+                            label: 'Libellé'
+                        code:
+                            label: 'Code'
+                        value:
+                            label: 'Valeur'
+
+forgot_password_request:
+    title: 'Mot de passe oublié'
+    form:
+        field:
+            email:
+                label: 'Votre adresse email'
+        action:
+            submit: 'Réinitialiser'
+        message:
+            success: 'Un email de confirmation a été envoyé à l''adresse "%email%"'
+    email:
+        subject: 'Réinitialisation de votre mot de passe'
+        content: >
+            <p>Bonjour %name%,</p>
+            <p>Afin de procéder à la réinitialisation de votre mot de passe, veuillez <br><a href="%url%" target="_blank" rel="noopener">cliquez sur ce lien</a>.</p>
+            <p>Ce lien a une validité de 3 heures.</p>
+forgot_password_action:
+    title: 'Rénitialiser mon mot de passe'
+    form:
+        field:
+            password:
+                first_options:
+                    label: 'Mot de passe'
+                    help: 'Votre mot de passe doit contenir au moins 10 caractères, dont 1 lettre en minuscule, 1 lettre en majuscule, 1 chiffre et 1 caractère spécial.'
+                second_options:
+                    label: 'Confirmation du mot de passe'
+                error:
+                    invalid:
+                        message: 'Les mots de passe saisis ne correspondent pas.'
+        action:
+            submit: 'Confirmer'
+    message:
+        user_not_found: 'Le token de réinitialisation est invalide ou a expiré.'
+        success: 'Votre mot de passe a été réinitialisé avec succès !'
+forgot_password_create:
+    title: 'Créer mon mot de passe'
+    message:
+        success: 'Votre mot de passe a été créé avec succès !'
+    email:
+        subject: 'Création de votre mot de passe'
+        content: >
+            <p>Bonjour %name%,</p>
+            <p>Afin de procéder à la création de votre mot de passe, veuillez <br><a href="%url%" target="_blank" rel="noopener">cliquez sur ce lien</a>.</p>
+            <p>Ce lien a une validité de 3 heures.</p>
+

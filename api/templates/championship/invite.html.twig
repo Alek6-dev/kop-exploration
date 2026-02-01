@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'invitation.page.title' | trans({}, 'championship')}} - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="h1"><div class="h1-subtitle">{{ 'invitation.title' | trans({'%championship_name%': championship.name}, 'championship') | raw}}</h1>
+    </div>
+
+    <div class="container mt-6">
+        {% if championship.createdBy.id == app.user.id %}
+           <div class="w-full zone block-animation">
+                <div class="relative w-full p-4">
+                    <h2 class="mb-2 h3">{{ 'invitation.section.share_code.title.label' | trans({}, 'championship') }}</h2>
+                    <p class="text-gray">{{ 'invitation.section.share_code.description.label' | trans({ '%championship_name%': championship.name, '%icon%': include('icons/money/kop.html.twig')}, 'championship') | raw}}</p>
+                    <div class="justify-between mt-4 flex-v-centering">
+                        <div>
+                            <div class="font-bold text-primary">{{ 'invitation.section.share_code.invitation_code.label' | trans({}, 'championship') }}</div>
+                            <div class="h2">{{ championship.invitationCode }}</div>
+                        </div>
+
+                        {% include 'components/Button/index.html.twig' with {
+                            label: ('invitation.section.share_code.button.label' | trans({}, 'championship')),
+                            className: 'btn-secondary h-8 text-sm px-3 flex-initial w-auto',
+                            id: 'share-button',
+                            specificAttr: 'data-share-title= "' ~ ('invitation.section.share_code.button.data_share.title.label' | trans({}, 'championship')) ~ '" data-share-desc= "' ~ ('invitation.section.share_code.button.data_share.description.label' | trans({'%creator_pseudo%' : championship.createdBy, '%championship_name%' : championship.name, '%invitation_code%' : championship.invitationCode }, 'championship')) ~ '" data-share-url="' ~ ('invitation.section.share_code.button.data_share.url.label' | trans({}, 'championship')) ~ '"'
+                        } %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="w-full mt-4 zone block-animation">
+            <div class="relative w-full overflow-hidden">
+                {% set playersTotal = championship.numberOfPlayers.value %}
+                {% set playersRegistered = championship.players|length %}
+                <h2 class="justify-between p-4 h3 flex-v-centering">{{ 'invitation.section.players.title.label' | trans({'%count%': playersRegistered, '%max%': playersTotal}, 'championship') | raw }}</h2>
+                {% for player in championship.players %}
+                    {% include 'components/Player/index.html.twig' with {
+                        name: player.user,
+                        car: null,
+                        className: 'w-16 h-10 '
+                    } %}
+                {% endfor %}
+            </div>
+        </div>
+        {% if championship.createdBy.id == app.user.id %}
+         <div class="w-full mt-4 zone block-animation">
+            <div class="relative w-full p-4 overflow-hidden">
+                <h2 class="justify-between mb-2 h3 flex-v-centering">{{ 'invitation.section.start.title.label' | trans({}, 'championship') }}</h2>
+                <p class="text-gray">{{ 'invitation.section.start.description.label' | trans({}, 'championship') }}</p>
+                {% set disabled = true %}
+                {% if playersRegistered is divisible by(2) %}
+                    {% set disabled = false %}
+                {% endif %}
+                 {% include 'components/Button/index.html.twig' with {
+                    label: ('invitation.section.start.button.label' | trans({}, 'championship')),
+                    href: path('app_championship_start', {'id': championship.id}),
+                    className: 'btn-primary mt-4',
+                    disabled: disabled
+                } %}
+
+                {% include 'components/Button/index.html.twig' with {
+                    label: ('invitation.section.cancel.button.label' | trans({}, 'championship')),
+                    href: path('app_championship_cancel', {'id': championship.id}),
+                    className: 'btn-primary mt-4',
+                    disable: false
+                } %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Storybook - King of Paddock{% endblock %}
+{% block header %}{% endblock %}
+{% block menu %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+            background: #222;
+        }
+
+        section {
+            padding: 40px 40px 60px;
+            border-bottom: 20px solid #444;
+            border-top: 1px solid #555;
+            scroll-margin-top: 50px;
+        }
+
+        section > h2 {
+            padding-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .anchors {
+            padding: 20px 40px;
+            font-size: 13px;
+            text-transform: lowercase;
+            font-weight: bold;
+            border-bottom: 1px solid #555;
+        }
+    </style>
+
+    <div class="w-full">
+
+        <h1 class="p-8 pb-0 pb-4 text-black bg-white h1">STORYBOOK</h1>
+
+        <ul id="anchors" class="sticky top-[-1px] z-40 flex flex-wrap bg-white gap-x-4 text-black anchors">
+
+        </ul>
+
+        <!-- MENU ITEM -->
+        <section>
+            <h2 class="text-white h2">Menu item</h2>
+
+            <div class="flex gap-4">
+                {% include 'components/MenuItem/index.html.twig' with {
+                    icon: 'trophy',
+                    title: 'Championnats',
+                    href: '',
+                } %}
+                {% include 'components/MenuItem/index.html.twig' with {
+                    icon: 'trophy',
+                    title: 'Championnats',
+                    href: '',
+                    className: 'is-active'
+                } %}
+            </div>
+        </section>
+
+        <!-- BUTTON -->
+        <section>
+            <h2 class="text-white h2">Button</h2>
+
+            <div class="flex gap-4">
+                {% include 'components/Button/index.html.twig' with {
+                    label: "S'inscrire",
+                    type: 'submit',
+                    className: 'btn-primary w-auto'
+                } %}
+
+                {% include 'components/Button/index.html.twig' with {
+                    label: "S'inscrire",
+                    type: 'submit',
+                    className: 'btn-secondary w-auto'
+                } %}
+
+                {% include 'components/Button/index.html.twig' with {
+                    label: "S'inscrire",
+                    type: 'submit',
+                    className: 'btn-primary w-auto',
+                    disabled: true
+                } %}
+
+                {% include 'components/Button/index.html.twig' with {
+                    label: "S'inscrire",
+                    type: 'submit',
+                    href: '#',
+                    className: 'btn-light w-auto'
+                } %}
+            </div>
+        </section>
+
+        <!-- LINK -->
+        <section>
+            <h2 class="text-white h2">Link</h2>
+
+            <div class="flex gap-4">
+                {% include 'components/Link/index.html.twig' with {
+                    label: 'Exemple de lien',
+                    href: '',
+                    className: 'text-primary'
+                } %}
+            </div>
+        </section>
+
+        <!-- CARDS -->
+        <section>
+            <h2 class="text-white h2">Cards</h2>
+
+            <div class="flex flex-col gap-4 overflow-hidden w-70">
+                {% include 'components/CardChampionship/index.html.twig' with {
+                    name: 'King Tournament',
+                    nextrace: 6,
+                    totalrace: 10,
+                    rank: '2ème',
+                    href: ''
+                } %}
+
+                {% set players = [
+                    {
+                        name: 'SupremeProst69',
+                        car: 'f1',
+                        className: 'bg-[#874B23]'
+                    },
+                ] %}
+                {% for player in players %}
+                    {% include 'components/Player/index.html.twig' with {
+                        name: player.name,
+                        car: player.car,
+                        className: 'w-16 h-10 ' ~ player.className
+                    } %}
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- TABS -->
+        <section>
+            <h2 class="text-white h2">Tabs</h2>
+
+            <div class="flex gap-4">
+                {% set tabs = [
+                    {
+                        label: 'En cours',
+                        route: 'app_storybook',
+                        counter: '3'
+                    },
+                        {
+                        label: 'Terminés',
+                        route: 'app_homepage',
+                        counter: '12'
+                    }
+                ] %}
+
+                {% include 'components/Tabs/index.html.twig' with {
+                    tabs: tabs,
+                    className: 'mt-2'
+                } %}
+            </div>
+        </section>
+
+        <!-- COUNTER -->
+        <section>
+            <h2 class="text-white h2">Counter</h2>
+
+            <div class="flex gap-4">
+                {% include 'components/Counter/index.html.twig' with {
+                    counter: '10',
+                    className: 'h-[14px] px-1 bg-gray text-black'
+                } %}
+            </div>
+        </section>
+
+         <!-- MISC -->
+        <section>
+            <h2 class="text-white h2">Misc</h2>
+
+            <div class="flex gap-4">
+                {% include 'components/CarInListing/index.html.twig' with {
+                    carWidth: '80',
+                    car: 'f1',
+                    className: 'w-16 h-10 bg-[#0000FF] overflow-hidden',
+                } %}
+            </div>
+        </section>
+
+    </div>
+
+
+
+    <!-- GENERATE ANCHORS -->
+    <script>
+        const $h2 = document.querySelectorAll('section > h2');
+        const $anchors = document.querySelector('#anchors');
+
+        $h2.forEach((title) => {
+            let titleText = title.innerText;
+            let titleNode = title.nodeName;
+            let link = titleText.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            link = link.replaceAll(" ", "-");
+            title.parentNode.setAttribute('id', link);
+            anchorLink = '<li><a href="#' + link + '" class="link">' + titleText + '</a></li>';
+            $anchors.innerHTML += anchorLink;
+        });
+    </script>
+
+
+{% endblock %}

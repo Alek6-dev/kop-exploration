@@ -1,0 +1,62 @@
+label, .label {
+  @apply font-bold mb-2 leading-tight;
+
+  span {
+    @apply text-primary;
+  }
+}
+
+input, .input, textarea, .textarea {
+  @apply bg-black/[0.16] border border-white/[0.06] rounded w-full px-4 outline-none hover:border-white/30 focus:border-white/30;
+}
+
+input[type="text"], input[type="password"],  input[type="email"], .input {
+  @apply h-10;
+}
+
+.form-item {
+  @apply flex flex-col w-full mb-5;
+}
+
+.form-error {
+  @apply text-sm text-red mt-1 font-bold;
+}
+
+.custom-radio {
+  input {
+    display: none;
+  }
+
+  label {
+    @apply flex-1;
+
+    > div {
+      @apply bg-[#3B3C3E] flex-centering h-10 rounded relative flex-1 text-white global-transition;
+      transition-property: color;
+
+      &::before {
+        content: "";
+        @apply block absolute -top-[2px] -left-[2px] rounded-[11px] global-transition opacity-0;
+        background-image: linear-gradient(135deg, theme('colors.white') 5%, theme('colors.primary') 80%);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        z-index: -1;
+        box-shadow: 0 0 10px 0 rgba(241,196,69,0.30);
+      }
+    }
+
+    input:checked + div {
+      background: #27282A;
+      @apply text-primary;
+
+      &::before {
+        @apply opacity-100;
+      }
+
+    }
+  }
+
+  &-complex label > div {
+    @apply flex items-center justify-start px-4 h-12;
+  }
+}

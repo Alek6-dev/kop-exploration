@@ -1,0 +1,11 @@
+{% extends 'layout/email/email.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block body %}
+    {{ 'forgot_password_request.email.content' | trans({
+        '%name%': name,
+        '%url%': url,
+    }, 'security') | raw }}
+    <br><br>
+{% endblock %}

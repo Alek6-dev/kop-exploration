@@ -1,0 +1,7 @@
+error:
+    no_active_season:
+        label: 'Pas de saison en cours.'
+    race_not_attached:
+        label: 'La course %race_name% n''est pas présente sur la saison %season_name%.'
+    no_sprint_available:
+        label: 'La course %race_name% n''a pas de date de sprint sur la saison %season_name%.'

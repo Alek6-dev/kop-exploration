@@ -1,0 +1,22 @@
+<table>
+    <thead>
+        <tr>
+            <th>Tour:</th>
+        </tr>
+        <tr>
+            <th>Place:</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in field.value %}
+        <tr>
+            <td>
+                {{ item.noLap }}
+            </td>
+            <td>
+                {{ item.place }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,18 @@
+{% set className = className ?? '' %}
+{% set title = title ?? label %}
+{% set counter = counter ?? 0 %}
+{% set isActive = false %}
+
+{% if app.request.get('_route') == route %}
+    {% set isActive = true %}
+{% endif %}
+
+<a href="{{ path(route) }}" class="flex-1 text-center flex-centering p-2 font-bold border-b {{ className }} {% if isActive %}border-primary text-primary [&>div]:bg-primary{% else %}border-white-6 text-gray{% endif %}" title="{{ title }}">
+{{ label }}
+
+{% include 'components/Counter/index.html.twig' with {
+    counter: counter,
+    className: 'h-[14px] px-1 bg-gray text-black ml-2'
+} %}
+
+</a>

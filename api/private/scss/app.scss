@@ -1,0 +1,31 @@
+// Folder
+$fonts-folder: "/public/assets/fonts";
+$misc-folder: "/public/assets/misc";
+
+
+@import 'font-face';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'utilities_custom';
+@import 'base_custom';
+@import 'components_custom';
+
+@import 'typography';
+@import 'animation';
+@import 'form';
+
+// Components
+@import 'templates/components/Button';
+@import 'templates/components/CardChampionship';
+@import 'templates/components/CarInListing';
+@import 'templates/components/FlashMessage';
+@import 'templates/components/Link';
+@import 'templates/components/MenuItem';
+@import 'templates/components/Separator';
+
+// Pages specific styles
+@import 'pages/hub';
+@import 'pages/login-register';

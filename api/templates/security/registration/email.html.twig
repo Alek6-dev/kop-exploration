@@ -1,0 +1,15 @@
+{% extends 'layout/email/email.html.twig' %}
+
+{% block preheader %}{{ 'registration.email.preheader' | trans({
+        '%name%': name,
+}, 'security') | raw }}{% endblock %}
+{% block title %}Finaliser votre inscription{% endblock %}
+
+
+{% block body %}
+    {{ 'registration.email.content' | trans({
+        '%name%': name,
+        '%url%': url,
+    }, 'security') | raw }}
+    <br><br>
+{% endblock %}

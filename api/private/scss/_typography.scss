@@ -1,0 +1,29 @@
+@layer components {
+  .h1 {
+    @apply uppercase font-bold font-title text-xl leading-tight;
+
+    span {
+      @apply text-primary block;
+    }
+
+    &-subtitle {
+      @apply text-sm text-white w-full overflow-hidden whitespace-nowrap text-ellipsis mb-[3px];
+    }
+  }
+
+  .h2 {
+    @apply font-bold text-lg leading-tight;
+  }
+
+  .h3 {
+    @apply font-bold text-medium leading-tight;
+  }
+
+  .h4 {
+    @apply font-bold text-base leading-tight;
+  }
+
+  p svg {
+    @apply w-auto h-[16px] inline-block -translate-y-[1px];
+  }
+}

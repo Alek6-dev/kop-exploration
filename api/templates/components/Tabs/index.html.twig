@@ -1,0 +1,10 @@
+<nav class="flex w-full {{ className }}">
+    {% for tab in tabs %}
+        {% include 'components/TabItem/index.html.twig' with {
+            label: tab.label,
+            route: tab.route,
+            counter: tab.counter,
+            className: ''
+        } %}
+    {% endfor %}
+</nav>

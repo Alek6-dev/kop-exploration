@@ -1,0 +1,19 @@
+@layer base {
+  body {
+    @apply bg-black text-base pb-18;
+  }
+
+  picture {
+    @apply block relative;
+  }
+
+  section {
+    @apply relative;
+  }
+
+  html, body {
+    @apply scroll-smooth text-white;
+    -webkit-font-smoothing : antialiased;
+    -moz-osx-font-smoothing : grayscale;
+  }
+}

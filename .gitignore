@@ -4,5 +4,6 @@
 .DS_Store
 
 # ClaudeCode
+.claude/*local*
 
 # Project

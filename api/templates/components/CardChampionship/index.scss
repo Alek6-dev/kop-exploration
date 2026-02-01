@@ -1,0 +1,7 @@
+.card-championship > div {
+  @apply relative rounded-lg overflow-hidden;
+  &::after {
+    content: "";
+    @apply absolute top-0 right-0 w-1 h-full bg-white;
+  }
+}

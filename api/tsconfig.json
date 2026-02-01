@@ -1,0 +1,20 @@
+{
+  "include": ["private/**/*", "./templates/**/*"],
+  "exclude": ["cypress", "private/**/*.stories.tsx"],
+  "compilerOptions": {
+    "target": "es6",
+    "outDir": "dist",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "jsx": "react",
+    "noEmit": false,
+    "isolatedModules": false,
+    "typeRoots": ["private/js/global.d.ts"]
+  }
+}

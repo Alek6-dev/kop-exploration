@@ -1,0 +1,53 @@
+@layer utilities {
+  .flex-centering {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-v-centering {
+    @apply flex items-center;
+  }
+
+  .global-transition {
+    transition: 0.3s ease-in-out;
+  }
+
+  .absolute-centering {
+    @apply absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2;
+  }
+
+  .gradient-white-gray {
+    background-image: theme('colors.gradient-white-gray');
+  }
+
+  .gradient-white-primary {
+    background-image:  theme('colors.gradient-white-primary');
+  }
+
+  .gradient-primary-white {
+    background-image:  theme('colors.gradient-primary-white');
+  }
+
+  .gradient-gray-white {
+    background-image: theme('colors.gradient-gray-white');
+  }
+
+  .svg-white * {
+    fill: theme('colors.white');
+  }
+
+  .svg-primary * {
+    fill: theme('colors.primary');
+  }
+
+  .svg-black * {
+    fill: theme('colors.black');
+  }
+
+  .svg-full svg {
+    @apply w-full h-full;
+  }
+
+  .no-delay {
+    animation-delay: 0s !important;
+  }
+}

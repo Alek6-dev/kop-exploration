@@ -1,0 +1,17 @@
+{
+  "bracketSpacing": true,
+  "jsxBracketSameLine": true,
+  "printWidth": 80,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "tabWidth": 2,
+  "useTabs": false,
+  "overrides": [
+    {
+      "files": ["*.yaml", "*.yml", "*.php"],
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}{{ 'dashboard.meta_title' | trans({}, 'admin') }}{% endblock %}
+
+{% block main %}
+    <div class="row text-center">
+        <div class="col">
+            <div class="card mb-3 rounded-2 shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title">{{ statistics.count_users }}</h1>
+                    {{ t('dashboard.statistics.count_users.label', {}, 'admin')|trans }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row text-center">
+        <div class="col">
+            <div class="card mb-3 rounded-2 shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title">{{ statistics.count_championship_active }}</h1>
+                    {{ t('dashboard.statistics.count_championship_active.label', {}, 'admin')|trans }}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-3 rounded-2 shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title">{{ statistics.count_championship_over }}</h1>
+                    {{ t('dashboard.statistics.count_championship_over.label', {}, 'admin')|trans }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col">
+            <div class="card mb-3 rounded-2 shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title">{{ statistics.count_cosmetics_bought }}</h1>
+                    <p>{{ t('dashboard.statistics.count_cosmetics_bought.label', {}, 'admin')|trans|raw }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main %}

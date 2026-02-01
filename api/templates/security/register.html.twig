@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'registration.page.title' | trans({}, 'security')}} - {{ parent() }}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block bodyClassName %}mb-0 pb-0{% endblock %}
+
+{% block body %}
+<picture class="absolute left-0 w-full -top-16 sm:-top-40 login-image">
+    <source media="(min-width:640px)" src="{{ asset('assets/images/login/login@2x.jpg') }} 1x, {{ asset('assets/images/login/login@2x.jpg') }} 2x">
+    <source srcset="{{ asset('assets/images/login/login.jpg') }} 1x, {{ asset('assets/images/login/login@2x.jpg') }} 2x">
+    <img src="{{ asset('assets/images/login/login.jpg') }}" class="block w-full">
+</picture>
+<video autoplay loop muted class="absolute left-0 block w-full h-30 -top-8 mix-blend-plus-lighter login-video">
+    <source src="{{ asset('assets/videos/particles.mp4') }}" type="video/mp4" />
+</video>
+
+<div class="container relative mt-20 mb-6">
+    <button onclick="history.back()" class="w-6 h-6 -ml-2 flex-centering">
+        {% include 'icons/back.html.twig' %}
+    </button>
+    <h1 class="mt-2 h1">{{ 'registration.title' | trans({}, 'security') | raw}}</h1>
+
+    <div class="w-full mt-6 zone">
+        <div class="relative flex w-full p-4">
+            {{ form_start(form, { 'attr' : {'class': 'w-full'} }) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.password.first, {type: 'password'}) }}
+                <p class="mb-5 -mt-3 text-sm text-gray">{{ 'common.form.field.password.help'|trans({}, 'user')}}</p>
+                {{ form_row(form.password.second, {type: 'password'}) }}
+                {{ form_row(form.pseudo) }}
+
+                {% include 'components/Separator/index.html.twig' with {
+                    className: 'my-6'
+                } %}
+
+                <div class="justify-between mb-6 flex-v-centering">
+                    <div class="block pr-6">
+                        <div class="mb-4 label">{{ 'registration.form.field.image.pre_label'|trans({}, 'security')}}</div>
+                        {{ form_row(form.image,
+                            {
+                                'id': 'file-input',
+                                'attr' : {'class': 'hidden', 'accept': ".jpg, .jpeg, .png"},
+                                'label_attr' : {'class': 'mb-0 btn btn-light'},
+                                'containerClassName': '!mb-0'
+                            }) }}
+                    </div>
+                    <img src="{{ asset('assets/images/avatar/avatar-generic-200.jpg') }}" alt="Preview Uploaded Image" id="file-preview" class="flex-shrink-0 object-cover w-16 h-16 rounded-full">
+                </div>
+
+                {{ form_row(form._token) }}
+
+                {{ form_row(form.submit, { 'attr' : {'class': 'btn btn-primary'}}) }}
+
+            {{ form_end(form) }}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block menu %}{% endblock %}

@@ -1,0 +1,95 @@
+create:
+    page:
+        title: 'Créer un championnat'
+    title: 'Créer un <span>championnat</span>'
+    form:
+        field:
+            name:
+                label: 'Nom du championnat'
+                placeholder: 'Entrez un nom...'
+            number_of_races:
+                label: 'Nombre de Grand-Prix'
+            number_of_players:
+                label: 'Nombre de joueurs'
+            joker_enabled:
+                label: 'Jouer avec les jokers'
+            submit:
+                label: 'Créer le championnat'
+    info:
+        message:
+            success: 'Le championnat a bien été créé.'
+invitation:
+    page:
+        title: 'En attente de joueurs'
+    title: '%championship_name%</div> <span>en attente de joueurs</span>'
+    section:
+        share_code:
+            title:
+                label: 'Utiliser un code d''invitation'
+            description:
+                label: 'Inviter vos amis à rejoindre « %championship_name% » en leur transmettant le code ci-dessous. <b>Et gagnez 20 jetons KOP</b> %icon% si un joueur s''inscrit sur King of Paddock pour rejoindre votre championnat.'
+            invitation_code:
+                label: 'Code d''invitation'
+            button:
+                label: 'Partager le code'
+                data_share:
+                    title:
+                        label: 'Rejoignez une fantasy league King of Paddock !'
+                    description:
+                        label: 'Vous êtes invité par %creator_pseudo% à rejoindre le championnat %championship_name% sur l''application King of Paddock. Connectez-vous et utilisez le code %invitation_code% pour jouer avec vos amis !'
+                    url:
+                        label: 'https://www.king-of-paddock.com'
+        players:
+            title:
+                label: 'Joueurs inscrits <span class="text-primary">%count% sur %max%</span>'
+        start:
+            title:
+                label: 'Lancer le championnat manuellement'
+            description:
+                label: 'Si le nombre de joueurs est pair, vous pouvez lancer manuellement le championnat. Sinon, attendez simplement que le nombre de joueurs souhaité soit atteint et le championnat débutera automatiquement.'
+            button:
+                label: 'Lancer le championnat'
+        cancel:
+            button:
+                label: 'Annuler le championnat'
+registration:
+    error:
+        user_already_registered:
+            label: 'Vous êtes déjà enregistré sur le championnat.'
+        max_players_reached:
+            label: 'Il n''y a plus de place disponible pour ce championnat.'
+        status:
+            label: 'Ce championnat n''est plus disponible.'
+start:
+    success:
+        label: 'Le championnat %championship_name% a été démarré.'
+    error:
+        wrong_creator:
+            label: 'Seul le créateur du championnat peut démarrer la compétition.'
+        player_count:
+            label: 'Le nombre de joueur inscrit doit être pair.'
+cancel:
+    success:
+        label: 'Le championnat %championship_name% a été annulé.'
+    error:
+        wrong_creator:
+            label: 'Seul le créateur du championnat peut annuler la compétition.'
+list:
+    menu:
+        title:
+            label: 'Championnats'
+    page:
+        title:
+            label: 'Championnats'
+    title:
+        label: 'Championnats'
+    tab:
+        in_progress:
+            label: 'En cours'
+        over:
+            label: 'Terminés'
+    button:
+        create:
+            label: 'Créer'
+        join:
+            label: 'Rejoindre'

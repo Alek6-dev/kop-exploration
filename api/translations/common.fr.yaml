@@ -1,0 +1,3 @@
+form:
+    error:
+        general: 'Le formulaire contient une ou plusieurs erreur(s).'

@@ -1,0 +1,65 @@
+{% set isHub = true %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Hub - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container relative flex flex-col overflow-hidden content-height">
+    <a href="" class="w-full zone flex-grow-[2] mb-4 block-animation no-delay">
+        <div class="relative pt-6 pl-6">
+            <h2 class="relative h2">Personnaliser<br> mon paddock</h2>
+            <div class="relative rounded-full bg-primary h-[24px] w-[24px] flex-centering mt-2">{% include 'icons/arrow-in-circle.html.twig' %}</div>
+        </div>
+        <div class="absolute hub-f1">
+            <picture class="block w-full translate-x-6 -translate-y-14">
+                <source srcset="{{ asset('assets/images/f1/f1.png') }} 1x, {{ asset('assets/images/f1/f1@2x.png') }} 2x">
+                <img src="{{ asset('assets/images/f1/f1.png') }}" class="relative block max-w-none" width="430">
+            </picture>
+        </div>
+    </a>
+
+    <div class="grid grid-cols-2 gap-4 hub-cta">
+        <a href="{{ path('app_championship_list') }}" class="relative delay-200 rounded-lg gradient-white-primary aspect-square block-animation">
+            <div class="relative pt-4 pl-4">
+                <h2 class="relative text-black h3">{{ 'list.menu.title.label' | trans({}, 'championship') }}</h2>
+                <div class="relative rounded-full bg-black h-[24px] w-[24px] flex-centering mt-2 svg-primary">{% include 'icons/arrow-in-circle.html.twig' %}</div>
+            </div>
+            <div class="absolute right-2 bottom-[-2px]">
+                {% include 'icons/big/trophy.html.twig' %}
+            </div>
+        </a>
+
+        <a href="" class="relative rounded-lg gradient-white-gray aspect-square block-animation">
+            <div class="relative pt-4 pl-4">
+                <h2 class="relative text-black h3">Quiz</h2>
+                <div class="relative rounded-full bg-black h-[24px] w-[24px] flex-centering mt-2 svg-white">{% include 'icons/arrow-in-circle.html.twig' %}</div>
+            </div>
+            <div class="absolute right-2 bottom-[-2px]">
+                {% include 'icons/big/quiz.html.twig' %}
+            </div>
+        </a>
+
+        <a href="" class="relative rounded-lg gradient-white-gray aspect-square block-animation">
+            <div class="relative pt-4 pl-4">
+                <h2 class="relative text-black h3">KOP Awards</h2>
+                <div class="relative rounded-full bg-black h-[24px] w-[24px] flex-centering mt-2 svg-white">{% include 'icons/arrow-in-circle.html.twig' %}</div>
+            </div>
+            <div class="absolute right-2 bottom-[-2px]">
+                {% include 'icons/big/podium.html.twig' %}
+            </div>
+        </a>
+
+        <a href="" class="relative rounded-lg gradient-white-primary aspect-square block-animation">
+            <div class="relative pt-4 pl-4">
+                <h2 class="relative text-black h3">Boutique</h2>
+                <div class="relative rounded-full bg-black h-[24px] w-[24px] flex-centering mt-2 svg-primary">{% include 'icons/arrow-in-circle.html.twig' %}</div>
+            </div>
+            <div class="absolute right-2 bottom-[-2px]">
+                {% include 'icons/big/store.html.twig' %}
+            </div>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

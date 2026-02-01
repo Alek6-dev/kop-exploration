@@ -1,0 +1,15 @@
+.flash-message {
+  @apply p-4 fixed top-0 left-0 w-full flex-v-centering z-30;
+
+  &.alert-background {
+    @apply bg-red;
+  }
+
+  &.hidden {
+    display: none
+  }
+
+  button {
+    @apply ml-4 svg-white;
+  }
+}

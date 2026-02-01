@@ -1,0 +1,8 @@
+form:
+    error:
+        general: 'Le formulaire contient une ou plusieurs erreur(s).'
+    field:
+        plain_password:
+            error:
+                password_strength:
+                    message: 'Le mot de passe est trop faible. Veuillez utiliser un mot de passe contenant au moins 10 caractères, dont 1 lettre, 1 chiffre et 1 caractère spécial.'

@@ -1,0 +1,13 @@
+@layer components {
+  .link {
+    background-image: linear-gradient(to right, currentColor 33%, transparent 33%, transparent 66%, currentColor 66%);
+    background-size: 310% 1px;
+    background-position: right bottom;
+    transition: 0.5s linear;
+    @apply inline font-bold bg-no-repeat;
+
+    &:hover, &:focus {
+      background-position: left bottom;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+
+.block-animation {
+  transform: translate3d(0, 100px, 0);
+  opacity: 0;
+  animation: 0.8s ease-in-out blockApparition forwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) { animation-delay: $i * 0.1s; }
+  }
+}
+
+@keyframes blockApparition {
+  0% {
+    transform: translate3d(0, 100px, 0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}

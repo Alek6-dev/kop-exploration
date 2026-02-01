@@ -1,0 +1,3 @@
+error:
+    not_found:
+        label: 'Paramètre introuvable.'

@@ -1,0 +1,81 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+
+<div class="row">
+    <table class="table">
+        <thead>
+        <tr >
+            <td>
+                Pilote
+            </td>
+            <td>
+                Position
+            </td>
+            <td>
+                Point Course
+            </td>
+            <td>
+                Position Qualif.
+            </td>
+
+            <td>
+                Point Qualif.
+            </td>
+            <td>
+                Position Sprint
+            </td>
+            <td>
+                Point Sprint
+            </td>
+            <td>
+                Gain de position
+            </td>
+            <td>
+                Points total
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for performance in field.value() %}
+            <tr>
+                <td>
+                    {{ performance.driver.name }}
+                </td>
+                <td>
+                    {{ performance.position }}
+                </td>
+                <td>
+                    {{ performance.racePoints.value }}
+                </td>
+                <td>
+                    {{ performance.qualificationPosition }}
+                </td>
+                <td>
+                    {{ performance.qualificationPoints.value }}
+                </td>
+                <td>
+                    {% if performance.sprintPosition is not null %}
+                        {{ performance.sprintPosition }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    {% if performance.sprintPoints is not null %}
+                        {{ performance.sprintPoints.value }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    {{ performance.positionGain }}
+                </td>
+                <td>
+                    {{ performance.score }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

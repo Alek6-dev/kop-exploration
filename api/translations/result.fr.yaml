@@ -1,0 +1,12 @@
+error:
+    no_active_season:
+        label: 'Pas de saison en cours.'
+    race_not_attached:
+        label: 'La course %race_name% n''est pas présente sur la saison %season_name%'
+    result_unique:
+        label: 'Un résultat a déjà été enregistré pour le pilote %driver% sur la course %race% (%type%) de la saison %season%'
+    import:
+        invalid_data:
+            label: 'Le fichier CSV est invalide. Vérifier les valeurs.'
+    laps_missing:
+        label: 'Le pilote %driver_name% ne possède que %laps% tours sur %laps_expected% tours attendus'

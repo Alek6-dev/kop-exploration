@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'account.info.page.title' | trans({}, 'user')}} - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="h1"><div class="h1-subtitle">{{ 'account.info.title' | trans({}, 'user') | raw }}</h1>
+    </div>
+
+    <div class="container mt-6">
+       <div class="w-full zone block-animation">
+            <div class="relative flex w-full p-4">
+                {{ form_start(form, { 'attr' : {'class': 'w-full'} }) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.pseudo) }}
+                <div class="justify-between mb-6 flex-v-centering">
+                    <div class="block pr-6">
+                        <div class="mb-4 label">{{ 'registration.form.field.image.pre_label'|trans({}, 'security')}}</div>
+                        {{ form_row(form.image,
+                            {
+                                'id': 'file-input',
+                                'attr' : {'class': 'hidden', 'accept': ".jpg, .jpeg, .png"},
+                                'label_attr' : {'class': 'mb-0 btn btn-light'},
+                                'containerClassName': '!mb-0'
+                            })
+                        }}
+                    </div>
+                    <img src="{{ asset(user.image ? 'uploads/images/default/' ~ user.image : 'assets/images/avatar/avatar-generic-200.jpg') }}" alt="Preview Uploaded Image" id="file-preview" class="flex-shrink-0 object-cover w-16 h-16 rounded-full">
+                </div>
+
+                {% include 'components/Separator/index.html.twig' with {
+                    className: 'my-6'
+                } %}
+                <p><b>Modifier votre de mot de passe</b>
+                <p class="mt-2">Si vous souhaitez modifier votre mot de passe, <span class="link" id="deploy-new-password">cliquez ici</span>.</p>
+                <div id="js-new-password" class="hidden mt-2">
+                    <p class="mb-4 text-sm text-gray">{{ 'common.form.field.password.help'|trans({}, 'user')}}</p>
+                    {{ form_row(form.password.first, {type: 'password'}) }}
+                    {{ form_row(form.password.second, {type: 'password'}) }}
+                </div>
+
+                {% include 'components/Separator/index.html.twig' with {
+                    className: 'my-6'
+                } %}
+
+                {{ form_row(form._token) }}
+
+                {{ form_row(form.submit, { 'attr' : {'class': 'btn btn-primary'}}) }}
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <div class="w-full mt-4 zone block-animation">
+            <div class="relative flex w-full p-4">
+                {% include 'components/Button/index.html.twig' with {
+                    label: "Déconnexion",
+                    href: path('_logout_main'),
+                    className: 'btn-primary'
+                } %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

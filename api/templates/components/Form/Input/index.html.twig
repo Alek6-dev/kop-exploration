@@ -1,0 +1,22 @@
+{% extends 'components/Form/Layout/index.html.twig' %}
+
+{% set required = required ?? true %}
+{% set type = type ?? 'text' %}
+{% set inputClassName = inputClassName ?? '' %}
+{% set placeholder = placeholder ?? '' %}
+{% set icon = icon ?? false %}
+{% set name = name ?? false %}
+{% set disabled = disabled ?? false %}
+{% set value = value ?? false %}
+
+{% block field %}
+    <input
+        type="{{ type }}"
+        id="{{ id }}"
+        name="{{ name }}"
+        placeholder="{{ placeholder }}"
+        {% if required %}required{% endif %}
+        {% if disabled %}disabled="disabled"{% endif %}
+        {% if value %}value="{{ value }}"{% endif %}
+        class="input {{ inputClassName }}" />
+{% endblock %}

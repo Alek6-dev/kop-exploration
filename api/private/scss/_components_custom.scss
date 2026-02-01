@@ -1,0 +1,45 @@
+@layer components {
+  .container {
+    @apply px-4 mx-auto;
+    max-width: 100%;
+    @media screen and (min-width: 768px) {
+      max-width: 740px !important;
+    }
+  }
+
+  .zone {
+    @apply bg-black rounded-lg relative flex flex-col;
+
+    > div {
+      z-index: 1;
+    }
+
+    &::before {
+      content: "";
+      @apply block absolute -top-[1px] -left-[1px] rounded-lg;
+      background-image: linear-gradient(135deg, #404144 5%, #313235 100%);
+      width: calc(100% + 2px);
+      height: calc(100% + 2px);
+      z-index: -1;
+    }
+
+    &::after {
+      content: "";
+      @apply block absolute top-0 left-0 rounded-lg w-full h-full;
+      background-color: #2F3032;
+      background-image: radial-gradient(circle at 12% 15%, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.00) 75%);
+      background-position: top left;
+      background-repeat: no-repeat;
+      background-size: 348px 216px;
+      z-index: 0;
+    }
+  }
+
+  .content-height {
+    height: calc(100dvh - 70px - 56px - 20px);
+  }
+
+  .gradient-mask-bottom {
+    background-image: linear-gradient(0deg, #28292B 36%, rgba(40,41,43,0.00) 100%);
+  }
+}

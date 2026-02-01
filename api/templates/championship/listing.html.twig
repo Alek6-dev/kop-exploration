@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'list.page.title.label' | trans({}, 'championship') }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="h1">{{ 'list.title.label' | trans({}, 'championship') }}</h1>
+    </div>
+
+    {% set tabs = [
+        {
+            label: ('list.tab.in_progress.label' | trans({}, 'championship')),
+            route: 'app_championships_listing',
+            counter: playersOnChampionship|length
+        },
+            {
+            label: ('list.tab.over.label' | trans({}, 'championship')),
+            route: 'app_homepage',
+            counter: playersOnChampionshipOver|length
+        }
+    ] %}
+
+    {% include 'components/Tabs/index.html.twig' with {
+        tabs: tabs,
+        className: 'mt-2 sticky top-0 z-10 bg-black block-animation no-delay'
+    } %}
+
+    <div class="container mt-6 championship-active">
+        {% for player in playersOnChampionship %}
+            {% include 'components/CardChampionship/index.html.twig' with {
+                name: player.championship.name,
+                nextrace: player.championship.championshipRaces|length,
+                totalrace: player.championship.numberOfRaces.value,
+                rank: player.rankingPlace,
+                href: (player.championship.status is constant('App\\Domain\\Common\\Enum\\ChampionshipStatusEnum::CREATED')) ? path('app_championship_invite_request', {'id': player.championship.id}) : ''
+            } %}
+        {% endfor %}
+    </div>
+
+    <div class="container mt-6 championship-over">
+        {% for player in playersOnChampionshipOver %}
+            {% include 'components/CardChampionship/index.html.twig' with {
+                name: player.championship.name,
+                nextrace: player.championship.championshipRaces|length,
+                totalrace: player.championship.numberOfRaces.value,
+                rank: player.rankingPlace,
+                href: ''
+            } %}
+        {% endfor %}
+    </div>
+
+    <div class="fixed left-0 flex items-end w-full h-20 gap-4 p-4 bottom-14 gradient-mask-bottom">
+        {% include 'components/Button/index.html.twig' with {
+            label: ('list.button.create.label' | trans({}, 'championship')),
+            href: path('app_championship_create'),
+            className: 'btn-primary block-animation'
+        } %}
+
+        {% include 'components/Button/index.html.twig' with {
+            label: ('list.button.join.label' | trans({}, 'championship')),
+            href: path('app_championship_join'),
+            className: 'btn-secondary block-animation'
+        } %}
+    </div>
+
+{% endblock %}

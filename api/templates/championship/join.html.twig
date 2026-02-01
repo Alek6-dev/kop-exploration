@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rejoindre un championnat - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="h1">Rejoindre un <span>championnat</span></h1>
+    </div>
+
+    <div class="container mt-6">
+       <div class="w-full zone block-animation">
+            <div class="relative flex flex-col w-full p-4">
+                <p class="mb-4 text-gray">Pour rejoindre un championnat existant, vous devez être en possession d'un code d'invitation envoyé par le créateur de ce championnat.</p>
+                <form class="w-full">
+                    <div class="form-item">
+                        <label for="code" class="label">Code d'invitation du championnat <span>*</span></label>
+                        <input type="text" id="code" name="name" placeholder="Entrez un code..." class="input" />
+                    </div>
+
+                    <div class="form-item">
+                        <label for="name" class="label">Nom de votre écurie <span>*</span></label>
+                        <input type="text" id="name" name="name" placeholder="Entrez un nom..." class="input" />
+                    </div>
+
+                    <p class="-mt-2 text-sm text-gray"><i>Le nom de votre écurie est propre à ce championnat et n'est plus modifiable après cette étape.</i></p>
+
+                    {% include 'components/Separator/index.html.twig' with {
+                        className: 'my-4 separator-full'
+                    } %}
+
+                    {% include 'components/Button/index.html.twig' with {
+                        label: 'Rejoindre le championnat',
+                        href: path('app_championship_invite_request'),
+                        className: 'btn-primary'
+                    } %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

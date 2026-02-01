@@ -1,0 +1,23 @@
+<header class="bg-black">
+    <div class="container justify-between py-2 pl-2 flex-v-centering">
+        {% if isHub is defined %}
+            <span class="ml-2 font-bold">{{ 'home.welcome' | trans({'%pseudo%': app.user.pseudo}, 'header') }}</span>
+        {% else %}
+            <button onclick="history.back()" class="w-6 h-6 flex-centering">
+                {% include 'icons/back.html.twig' %}
+            </button>
+        {% endif %}
+        <div class="flex-v-centering">
+            <a href="{{ path('app_account_wallet') }}" class="flex-v-centering">
+                <span class="mr-1 text-sm text-primary">200</span>
+                {% include 'icons/money/kop.html.twig' %}
+            </a>
+            <a href="{{ path('app_account_info') }}" class="block ml-2">
+                <picture>
+                    <source srcset="{{ asset(app.user.image ? 'uploads/images/default/' ~ app.user.image : 'assets/images/avatar/avatar-generic-200.jpg') }} 1x, {{ asset(app.user.image ? 'uploads/images/default/' ~ app.user.image : 'assets/images/avatar/avatar-generic@2x.jpg') }} 2x">
+                    <img src="{{ asset(app.user.image ? 'uploads/images/default/' ~ app.user.image : 'assets/images/avatar/avatar-generic-200.jpg') }}" class="h-[36px] w-[36px] block rounded-full">
+                </picture>
+            </a>
+        </div>
+    </div>
+</header>
