@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model\Operation;
+use ApiPlatform\OpenApi\Model\RequestBody;
 use App\Bid\Application\Dto\AddBidDto;
 use App\Bid\Domain\Model\BettingRoundDriverInterface;
 use App\Bid\Domain\Model\BettingRoundInterface;
@@ -27,8 +29,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     shortName: 'Player',
+    description: 'Joueur participant à un championnat',
     operations: [
-        new Get(),
+        new Get(
+            openapi: new Operation(
+                summary: 'Détails d\'un joueur',
+                description: 'Récupère les informations complètes d\'un joueur incluant son équipe, son budget et ses enchères.',
+                tags: ['Joueurs'],
+            ),
+        ),
         new Get(
             uriTemplate: '/championships/{championshipUuid}/my-player',
             uriVariables: [
@@ -36,6 +45,11 @@ use Symfony\Component\Validator\Constraints as Assert;
             ],
             paginationEnabled: false,
             provider: PlayerItemByChampionshipProvider::class,
+            openapi: new Operation(
+                summary: 'Mon profil joueur',
+                description: 'Récupère le profil du joueur authentifié pour un championnat spécifique.',
+                tags: ['Joueurs'],
+            ),
         ),
         new Post(
             uriTemplate: '/championships/{championshipUuid}/bid',
@@ -45,6 +59,42 @@ use Symfony\Component\Validator\Constraints as Assert;
             paginationEnabled: false,
             input: AddBidDto::class,
             processor: CreateBidProcessor::class,
+            openapi: new Operation(
+                summary: 'Placer des enchères',
+                description: 'Place des enchères sur des pilotes et/ou une équipe pour la manche en cours. Le budget sera réservé et les enchères seront résolues à la fin de la période.',
+                tags: ['Enchères'],
+                requestBody: new RequestBody(
+                    description: 'Détails des enchères (pilotes et équipe)',
+                    required: true,
+                ),
+                responses: [
+                    '200' => [
+                        'description' => 'Enchères placées avec succès',
+                    ],
+                    '400' => [
+                        'description' => 'Données invalides ou budget insuffisant',
+                        'content' => [
+                            'application/ld+json' => [
+                                'example' => [
+                                    '@type' => 'hydra:Error',
+                                    'hydra:description' => 'Budget insuffisant pour cette enchère',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '409' => [
+                        'description' => 'Période d\'enchères fermée',
+                        'content' => [
+                            'application/ld+json' => [
+                                'example' => [
+                                    '@type' => 'hydra:Error',
+                                    'hydra:description' => 'La période d\'enchères pour cette manche est terminée',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ),
         ),
     ],
     normalizationContext: [
