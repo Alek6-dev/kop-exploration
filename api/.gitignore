@@ -60,3 +60,7 @@ config/docker/images/nginx/localhost.*
 php.log
 .bash_history
 ###< docker ###
+
+###> api-platform ###
+/public/openapi.json
+###< api-platform ###
