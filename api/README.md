@@ -1,338 +1,507 @@
-# kop
+# King of Paddock (KOP) - API Backend
 
-TODO
+API Backend pour King of Paddock, une application de fantasy league motorsport où les utilisateurs gèrent des équipes de course virtuelles, participent à des enchères et s'affrontent sur la base de résultats de courses réels.
 
-## Lien direct
+## Table des matières
 
-- [kop](#-appname-)
-  - [Lien direct](#lien-direct)
-  - [Développeurs](#développeurs)
-  - [Environnement](#environnement)
-    - [🏘️ Production](#️-production)
-    - [🏠 Staging](#-staging)
-    - [🏚️ Demo](#️-demohttps-appname-novademonet)
-  - [Architecture](#architecture)
-    - [Backend](#backend)
-    - [Frontend](#frontend)
-  - [Makefile](#makefile)
-  - [Setup du projet](#setup-du-projet)
-    - [Back-end](#back-end)
-      - [Import des données](#import-des-données)
-      - [Certificat SSL](#certificat-ssl)
-    - [Frontend](#frontend-1)
-      - [Pré-requis](#pré-requis)
-      - [Installation](#installation)
-  - [Storybook](#storybook)
+- [Stack Technique](#stack-technique)
+- [Architecture](#architecture)
+  - [Domain-Driven Design (DDD)](#domain-driven-design-ddd)
+  - [CQRS Pattern](#cqrs-pattern)
+  - [API Platform](#api-platform)
+- [Prérequis](#prérequis)
+- [Installation](#installation)
+  - [Configuration SSL locale](#configuration-ssl-locale)
+  - [Installation des dépendances](#installation-des-dépendances)
+  - [Configuration de la base de données](#configuration-de-la-base-de-données)
+- [Commandes Make Disponibles](#commandes-make-disponibles)
+  - [Docker](#docker)
+  - [Composer](#composer)
+  - [Base de données](#base-de-données)
+  - [Assets (pnpm)](#assets-pnpm)
   - [Tests](#tests)
-  - [Déploiement](#déploiement)
-    - [Review app](#review-app)
-    - [Démo](#démo)
+  - [Code Quality](#code-quality)
+- [BackOffice](#backoffice)
+- [Testing](#testing)
+- [Stripe (Paiements)](#stripe-paiements)
+  - [Configuration locale](#configuration-locale)
+- [Fonctionnement Métier](#fonctionnement-métier)
+  - [Workflow Championnat](#workflow-championnat)
+  - [Import des Résultats de Course](#import-des-résultats-de-course)
+- [Comptes de Test](#comptes-de-test)
 
-## Développeurs
+## Stack Technique
 
-- Site : **TODO**
-- Backend : **TODO**
-
-## Environnement
-
-### 🏘️ [Production](https://xxx.fr)
-
-### 🏠 [Staging](https://xxx.fr)
-
-### 🏚️ [Demo](https://kop.novademo.net/)
+- **Framework**: Symfony 6.4
+- **PHP**: 8.3
+- **Base de données**: MySQL 8
+- **Search Engine**: Elasticsearch 7.17.28
+- **API**: API Platform 3.2
+- **Admin**: EasyAdmin 4
+- **Authentification**: JWT (Lexik)
+- **Paiements**: Stripe
+- **Tests**: PestPHP
+- **Code Quality**: PHP-CS-Fixer, PHPStan
+- **Assets**: Webpack Encore + Tailwind CSS
+- **Package Manager**: pnpm (monorepo)
+- **Docker**: Environnement de développement local
 
 ## Architecture
 
+### Domain-Driven Design (DDD)
 
-### Backend
+L'API repose sur une architecture DDD organisée par feature/bounded context. Chaque domaine métier est isolé dans son propre namespace avec ses entités, value objects, repositories et services.
 
+**Structure des bounded contexts** (`src/`):
 
-L'API repose sur ApiPlatform. les données sont rendues en REST.
+```
+src/
+├── Admin/           # Interface d'administration (EasyAdmin)
+├── Bid/             # Système d'enchères
+├── Bonus/           # Gestion des bonus
+├── Championship/    # Gestion des championnats
+├── Cosmetic/        # Éléments cosmétiques
+├── CreditWallet/    # Portefeuille de crédits virtuels
+├── Driver/          # Entités et logique des pilotes
+├── Duel/            # Système de duels
+├── Parameter/       # Paramètres système
+├── Performance/     # Calcul des performances
+├── Player/          # Comptes joueurs
+├── Race/            # Gestion des courses
+├── Result/          # Résultats de courses
+├── Season/          # Saisons de course
+├── Shared/          # Utilitaires partagés
+├── Strategy/        # Stratégies de course
+├── Team/            # Gestion des écuries
+└── User/            # Utilisateurs système
+```
 
-#### DDD
+Chaque bounded context suit une structure cohérente:
+- **Entity/**: Entités du domaine
+- **Repository/**: Accès aux données
+- **Service/**: Logique métier
+- **Command/** & **Query/**: CQRS handlers
 
-L'architecture repose sur une architecture DDD. 
-Ici, le choix a été fait de structurer en feature pour ajouter plus facilement les nouveaux développements au fil des sprints.
+### CQRS Pattern
 
-#### CQRS
+Le pattern **CQRS** (Command Query Responsibility Segregation) est appliqué pour séparer les opérations d'écriture (Commands) des opérations de lecture (Queries).
 
-Nous avons choisi d'appliquer le pattern CQRS afin de sécuriser d'avantage les nombreuses opérations que possède le projet et permettre une meilleure maintenabilité et scalabilité par la suite.
+**Avantages**:
+- Sécurité accrue des opérations
+- Meilleure maintenabilité
+- Scalabilité future
+- Séparation claire des responsabilités
 
-### Stripe
+**Exemple**:
+- `Championship/Command/CreateChampionshipCommand` - Création d'un championnat
+- `Championship/Query/GetChampionshipQuery` - Lecture d'un championnat
 
-#### Local
+### API Platform
 
-Créer une clé locale Stripe 
+L'API expose les ressources en REST grâce à API Platform. Les ressources sont annotées avec les attributs API Platform pour:
+- Exposition automatique des endpoints CRUD
+- Documentation OpenAPI automatique
+- Serialization/Deserialization
+- Validation
+- Filtrage et pagination
 
-`` run stripe-cli listen --forward-to nginx:80/api/payment/confirm``
-(Cliquer sur le lien dans la console pour valider la création de la clé locale)
+**Documentation API**: `/api/docs` (interface Swagger UI)
 
-Lancer le listener 
+## Prérequis
 
-``docker-compose run stripe-cli listen --skip-verify --forward-to nginx:80/api/payment/confirm --api-key {limited_key}``
+- **Docker** et **Docker Compose**
+- **pnpm** 9+ (`npm install -g pnpm`)
+- **Node.js** 20+ (géré via `nvm use`)
+- **mkcert** (pour les certificats SSL locaux)
 
-Mock d'un webhook
+## Installation
 
-``docker-compose run stripe-cli trigger checkout.session.completed --api-key {limited_key}``
+### Configuration SSL locale
 
-### Frontend
+Les certificats SSL sont **indispensables** pour le bon fonctionnement de NGINX.
 
-Le front est sur un projet séparé excepté la partie BackOffice (Easy Admin) et les mails.
+1. Installer mkcert:
+```bash
+make install-mkcert
+```
 
-#### BackOffice
+2. Générer le certificat:
+```bash
+make regenerate-mkcert
+```
 
-L'url du Back Office est la suivante:
+**En cas d'erreur** (`ERROR: failed to save certificate key: open config/docker/images/nginx/localhost.key: is a directory`):
+```bash
+rm -rf config/docker/images/nginx/localhost.*
+make regenerate-mkcert
+```
 
-`/admin`
+**Partage du certificat sur Android**:
 
-## Fonctionnement
+Pour accéder au domaine en SSL depuis un téléphone Android:
+1. Copier le contenu du fichier `config/docker/images/nginx/rootCA.pem` sur le téléphone
+2. Aller dans **Paramètres** → **Sécurité** → **Autres paramètres** → **Cryptage et références** → **Installer depuis le stockage**
+3. Sélectionner le fichier `rootCA.pem` et lui donner un nom
+4. Redémarrer le navigateur
+5. Accéder à `https://192.168.x.x`
 
-### Workflow championnat
+### Installation des dépendances
 
+**Depuis la racine du monorepo**:
+```bash
+# Installation complète (API + App)
+make install
 
-#### Lancement du championnat
+# Démarrer tous les services
+make up
 
-Pour chaque Championnat qui a atteint le maximum de joueurs:
-* Mise à jour du statut du championnat pour passer aux enchères
+# Ou uniquement l'API
+make api-up
+```
 
-Statut: CREATED (1) -> BID_IN_PROGRESS (2)
+**Depuis le dossier `api/`**:
+```bash
+# Démarrer les services Docker
+make docker-up
 
-Cron `app:championship:start`
+# Installer les dépendances PHP
+make composer-install
 
-#### Assignation des résultats d'enchère
+# Installer les dépendances npm et compiler les assets
+pnpm install
+pnpm run build
 
-Pour chaque Championnat après la fin du tour d'enchère:
-* Assignation des pilotes/écuries aux joueurs ayant la plus haute enchère (en cas d'égalité, le joueur ayant enchéri le premier gagne)
+# Ou via Make
+make npm-install
+make npm-build
+```
 
-Statut championnat: BID_IN_PROGRESS (2) -> BID_RESULT_PROCESSED (3)
+### Configuration de la base de données
 
-Cron `app:championship:assign-item`
+1. Générer les clés JWT:
+```bash
+docker compose exec php gosu kop php bin/console lexik:jwt:generate-keypair
+```
 
-#### Assignation automatiques aux joueurs AFK ou sans budget suffisant
+2. Créer et peupler la base de données:
+```bash
+# Depuis la racine
+make api-db
 
-Pour chaque Championnat après assignation des résultats aux gagnants:
-* Assignation automatiques de pilotes et écuries aux joueurs n'ayant plus le budget suffisant pour faire une enchères
-* Assignation automatiques de pilotes et écuries aux joueurs AFK (joueur n'ayant pas fait d'enchères sur les 2 derniers tours)
-* Si tous les joueurs ont 2 pilotes et 1 écurie assigné, le championnat passe à l'étape d'assignation des courses
-* Sinon, les tours d'enchère est incrémenté et on revient au statut d'enchère
+# Ou depuis api/
+make db-dev
+```
 
-Statut championnat:
-BID_RESULT_PROCESSED (3) -> NEED_TO_ASSIGN_RACES (4)
-BID_RESULT_PROCESSED (3) -> BID_IN_PROGRESS (2)
+Cette commande:
+- Supprime la base existante
+- Crée une nouvelle base
+- Exécute les migrations
+- Charge les fixtures de développement
 
-Cron: `app:championship:assign-auto`
+**URL d'accès**: `https://kop.local` (configurer `/etc/hosts` si nécessaire)
 
-#### Assignation des courses
+## Commandes Make Disponibles
 
-Pour chaque Championnat après la fin des enchères:
-* Assignation des prochaines courses après la date actuelle + 7 jours (pour que les joueurs aient le temps d'effectuer leur strategie)
-* Si il reste moins de 4 courses, le championnat est annulé
+Utiliser `make help` pour lister toutes les commandes disponibles.
 
-Statut championnat:
-NEED_TO_ASSIGN_RACES (4) -> ACTIVE (5)
+### Docker
 
-Statut première course championnat:
-CREATED (1) -> ACTIVE (2)
+```bash
+make docker-build         # Construire les images Docker
+make docker-up           # Démarrer les services Docker
+make docker-down         # Arrêter les services Docker
+make docker-down-volumes # Arrêter et supprimer les volumes
+make docker-restart      # Redémarrer les services
+```
 
-Cron: `app:championship:assign-races`
+### Composer
 
-#### Fin des strategies
+```bash
+make composer-install      # Installer les packages
+make composer-update       # Mettre à jour les packages
+make composer-require ARGS="vendor/package"  # Ajouter un package
+make composer-require-dev ARGS="vendor/package"  # Ajouter un package dev
+make composer-remove ARGS="vendor/package"   # Supprimer un package
+```
 
-Pour chaque Championnat actif et ayant une course active avec une date de fin de strategie dépassée:
-* Soustrait une utilisation au compteur d'utilisation de pilote pour les stategies (si pas de pilote sélectionné, on soustrait en priorité sur le compteur du pilote 1)
-* Affecte aléatoirement un pilote pour le duel si le joueur n'en a pas sélectionné.
-* Soustrait une utilisation au compteur d'utilisation de pilote pour les duels
-* Change le statut de la course du championnat à 'En attente de résultat'
+### Base de données
 
-Cron: `app:championship:end-strategy`
+```bash
+make db-dev              # Réinitialiser la BDD de dev avec fixtures
+make db-test             # Réinitialiser la BDD de test avec fixtures
+make fixtures-update     # Recharger uniquement les fixtures (dev)
+make test-fixtures-update # Recharger uniquement les fixtures (test)
+```
 
-Statut course championnat:
-ACTIVE (2) -> WAITING_RESULT (3)
+### Assets (pnpm)
 
-#### Import des résultats de course
+```bash
+# Via pnpm (recommandé)
+pnpm install             # Installer les dépendances
+pnpm run build           # Build de production
+pnpm start               # Dev avec watch mode
 
-Action Back-Office.
+# Via Make (utilise Docker)
+make npm-install         # Installer les dépendances
+make npm-build           # Build de production
+make npm-start           # Dev avec watch mode
+make assets-install      # Installer les assets Symfony
+```
 
-L'import des résultats s'effectue pour 1 course sur une saison donnée.
-Le fichier à importer est un CSV contenant la position du pilote pour chaque tour. Le format est le suivant:
+### Tests
 
-| Pilotes        | Qualification | Sprint | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | {numéro tour} |
-|----------------|---------------|--------|---|---|---|---|---|---|---|---|---|---|---------------|
-| Max VERSTAPPEN | 1             | 1      | 1 | 1 | 1 | 2 | 1 | 2 | 1 | 2 | 1 | 2 | 1             |
+```bash
+make tests               # Lancer tous les tests
+make pest-run            # Lancer tous les tests PestPHP (compact, parallel)
+make pest-run-verbose    # Tests avec détails complets
+make pest-run-unit       # Tests unitaires uniquement
+make pest-run-integration # Tests d'intégration
+make pest-run-application # Tests applicatifs
+make pest-run-architecture # Tests d'architecture
+make pest-run-one NAME="tests/Unit/MyTest.php"  # Test spécifique
+make pest-bail           # Arrêter au premier échec
+make pest-dirty          # Relancer uniquement les tests modifiés
+make pest-retry          # Relancer les tests échoués
+make pest-profile        # Profiler les tests lents
+make pest-todos          # Lister les tests TODO
+```
 
-_Note: La position sprint peut être vide si la course n'a pas d'epreuve sprint_
+### Code Quality
 
-Cet import permet d'enregistrer les résultats par tour mais aussi les performances générales des pilotes et écuries.
+```bash
+make cs-check            # Vérifier le code style (PHP-CS-Fixer)
+make cs-fix              # Corriger le code style
+make stan                # Analyse statique (PHPStan level 6)
+make security-check      # Vérifier les vulnérabilités de sécurité
+```
 
-Enfin l'import met a jour le statut de la course du championnat à 'Résultat effectué'
+### Setup complet
 
-Statut course championnat:
-WAITING_RESULT (3) -> RESULT_PROCESSED (4)
+```bash
+make setup-dev           # Setup dev rapide
+make setup-dev-full      # Setup dev complet (avec composer + npm)
+make setup-prod          # Setup production
+```
+
+## BackOffice
+
+Interface d'administration construite avec **EasyAdmin 4**.
+
+**URL**: `/admin`
+
+**Fonctionnalités principales**:
+- Gestion des championnats, courses, pilotes, écuries
+- Import des résultats de courses (CSV)
+- Génération des performances
+- Gestion des utilisateurs et joueurs
+- Configuration des paramètres système
+
+## Testing
+
+Le projet utilise **PestPHP** pour tous les types de tests:
+
+- **Tests unitaires** (`@group unit`): Logique métier isolée
+- **Tests d'intégration** (`@group integration`): Interactions avec la BDD
+- **Tests applicatifs** (`@group application`): Tests end-to-end API
+- **Tests d'architecture** (`@group architecture`): Respect des règles DDD/CQRS
+
+**Configuration**: `Pest.php` et `phpunit.xml.dist`
+
+**Exemple de lancement**:
+```bash
+# Tous les tests en parallèle
+make pest-run
+
+# Seulement les tests d'un groupe
+make pest-run-unit
+
+# Un test spécifique
+make pest-run-one NAME="tests/Unit/Championship/ChampionshipTest.php"
+```
+
+## Stripe (Paiements)
+
+L'application utilise **Stripe** pour gérer les paiements et abonnements.
+
+### Configuration locale
+
+Pour tester les webhooks Stripe en local, utiliser le **Stripe CLI**:
+
+1. **Créer une clé locale**:
+```bash
+docker-compose run stripe-cli listen --forward-to nginx:80/api/payment/confirm
+```
+Cliquer sur le lien dans la console pour valider la création de la clé.
+
+2. **Lancer le listener**:
+```bash
+docker-compose run stripe-cli listen --skip-verify \
+  --forward-to nginx:80/api/payment/confirm \
+  --api-key {limited_key}
+```
+
+3. **Simuler un webhook** (pour tests):
+```bash
+docker-compose run stripe-cli trigger checkout.session.completed \
+  --api-key {limited_key}
+```
+
+## Fonctionnement Métier
+
+### Workflow Championnat
+
+Le cycle de vie d'un championnat suit plusieurs étapes automatisées par des commandes cron.
+
+#### 1. Lancement du championnat
+
+**Déclenchement**: Pour chaque championnat ayant atteint le nombre maximum de joueurs
+
+**Action**: Mise à jour du statut pour démarrer les enchères
+
+**Statut**: `CREATED (1)` → `BID_IN_PROGRESS (2)`
+
+**Cron**: `app:championship:start`
+
+---
+
+#### 2. Assignation des résultats d'enchère
+
+**Déclenchement**: Après la fin du tour d'enchères
+
+**Action**: Assignation des pilotes/écuries aux joueurs ayant la plus haute enchère
+- En cas d'égalité, le joueur ayant enchéri en premier gagne
+
+**Statut**: `BID_IN_PROGRESS (2)` → `BID_RESULT_PROCESSED (3)`
+
+**Cron**: `app:championship:assign-item`
+
+---
+
+#### 3. Assignation automatique (AFK et budget insuffisant)
+
+**Déclenchement**: Après assignation des résultats aux gagnants
+
+**Actions**:
+- Assignation automatique de pilotes et écuries aux joueurs n'ayant plus le budget suffisant pour enchérir
+- Assignation automatique aux joueurs **AFK** (n'ayant pas fait d'enchères sur les 2 derniers tours)
+- **Si tous les joueurs ont 2 pilotes et 1 écurie**: passage à l'étape d'assignation des courses
+- **Sinon**: incrémentation du tour d'enchères et retour au statut d'enchère
+
+**Statut**:
+- `BID_RESULT_PROCESSED (3)` → `NEED_TO_ASSIGN_RACES (4)` (si complet)
+- `BID_RESULT_PROCESSED (3)` → `BID_IN_PROGRESS (2)` (si nouveau tour)
+
+**Cron**: `app:championship:assign-auto`
+
+---
+
+#### 4. Assignation des courses
+
+**Déclenchement**: Après la fin des enchères
+
+**Actions**:
+- Assignation des prochaines courses après **date actuelle + 7 jours** (pour laisser le temps aux joueurs de définir leur stratégie)
+- **Annulation du championnat** s'il reste moins de 4 courses
+
+**Statut championnat**: `NEED_TO_ASSIGN_RACES (4)` → `ACTIVE (5)`
+
+**Statut première course**: `CREATED (1)` → `ACTIVE (2)`
+
+**Cron**: `app:championship:assign-races`
+
+---
+
+#### 5. Fin des stratégies
+
+**Déclenchement**: Pour chaque championnat actif ayant une course active avec date de fin de stratégie dépassée
+
+**Actions**:
+- Soustraction d'une utilisation au compteur d'utilisation de pilote pour les stratégies (si pas de pilote sélectionné, soustraction en priorité sur le pilote 1)
+- Affectation **aléatoire** d'un pilote pour le duel si le joueur n'en a pas sélectionné
+- Soustraction d'une utilisation au compteur de pilote pour les duels
+- Changement du statut de la course à "En attente de résultat"
+
+**Statut course**: `ACTIVE (2)` → `WAITING_RESULT (3)`
+
+**Cron**: `app:championship:end-strategy`
+
+---
+
+### Import des Résultats de Course
+
+**Action**: Manuelle depuis le Back-Office
+
+L'import des résultats s'effectue pour **1 course sur une saison donnée**.
+
+#### Format du fichier CSV
+
+| Pilotes         | Qualification | Sprint | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | {numéro tour} |
+|-----------------|---------------|--------|---|---|---|---|---|---|---|---|---|---|---------------|
+| Max VERSTAPPEN  | 1             | 1      | 1 | 1 | 1 | 2 | 1 | 2 | 1 | 2 | 1 | 2 | 1             |
+| Charles LECLERC | 2             |        | 2 | 2 | 2 | 1 | 2 | 1 | 2 | 1 | 2 | 1 | 2             |
+
+**Note**: La colonne Sprint peut être vide si la course n'a pas d'épreuve sprint.
+
+#### Processus d'import
+
+1. **Enregistrement des résultats par tour**: Position du pilote pour chaque tour de course
+2. **Calcul des performances générales**: Performance des pilotes et écuries
+3. **Mise à jour du statut**: La course passe au statut "Résultat effectué"
+
+**Statut course**: `WAITING_RESULT (3)` → `RESULT_PROCESSED (4)`
+
+---
 
 #### Génération des performances sur les championnats
 
-Action Back-Office.
+**Action**: Manuelle depuis le Back-Office (après l'import)
 
-Une fois l'import de résultat effectué, il faut générer les performances pour les championnats.
-Cette opération sert à calculer les performances avec les bonus utilisés,
-de calculer les scores/points/positions des joueurs sur les différents championnats.
+Une fois l'import de résultat effectué, il faut **générer les performances** pour les championnats.
 
-_**Attention: Une fois les performances générées il n'est actuellement plus possible de supprimer les résultats importés car nous ne traçons pas les "mouvements" de score/points/positions des joueurs.
-Il est donc nécessaire de s'assurer de la validité des résultats importés avant de générer les performances.**_
+**Cette opération**:
+- Calcule les performances avec les bonus utilisés
+- Calcule les scores/points/positions des joueurs sur les différents championnats
 
+**⚠️ ATTENTION**: Une fois les performances générées, il n'est **actuellement plus possible** de supprimer les résultats importés car nous ne traçons pas les "mouvements" de score/points/positions des joueurs.
 
-## Makefile
+**Il est donc nécessaire de s'assurer de la validité des résultats importés avant de générer les performances.**
 
-Un fichier Makefile centralise l'ensemble des commandes fréquentes pour le développement de l'outil.
+---
 
-La commande `make` permet de lister les commandes make disponibles.
+## Comptes de Test
 
-## Setup du projet
-
-Lancement des containers Docker
-
-`make docker-up`
-
-#### Installer l'encryption de JWT
-```sh
- phpd bin/console lexik:jwt:generate-keypair
-```
-
-### Back-end
-
-#### Import des données
-
-```sh
- phpd bin/console do:mi:mi
- make setup-database
-```
-
-#### Données de test
-```sh
- phpd bin/console do:fix:load
-```
-
-### Comptes utilisateur
-
-#### Administrateurs
+### Administrateurs
 
 | Rôle                 | Commentaire            | Email              | Mot de passe |
 |----------------------|------------------------|--------------------|--------------|
 | Super Administrateur | Tous les droits        | admin+super@kop.fr | password     |
 
-
-#### Certificat SSL (**indispensable pour le lancement de NGINX**)
-
-Il est possible de générer rapidement un certificat SSL qui pointera sur l'IP local de la machine (192.168.x.x)
-
-Il faut en premier installer `mkcert` :
-
-```sh
-make install-mkcert
-```
-
-Puis générer le certificat :
-
-```sh
-make regenerate-mkcert
-```
-**En cas d'erreur** : `ERROR: failed to save certificate key: open config/docker/images/nginx/localhost.key: is a directory`   
-Supprimer les dossiers `config/docker/images/nginx/localhost.crt` et `config/docker/images/nginx/localhost.key` puis relancer la commande ou :
-```sh
-rm -rf config/images/nginx/localhost.*
-make regenerate-mkcert
-```
-
-**Partager le certificat sur Android**
-
-Pour avoir accès au domaine en SSL, il faut installer le certificat localement sur le téléphone.
-
-Les étapes sur Android 10 :
-
-- copier le contenu du fichier `config/docker/images/nginx/rootCA.pem` sur le téléphone
-- ensuite, se rendre dans les paramètres, puis **sécurité** -> **autres paramètres** -> **cryptage et références** et **installer depuis le stockage** (le chemin peu varier suivant les versions d'Android)
-- sélectionner le fichier **rootCA.pem** dans le téléphone et lui donner un nom
-- redémarrer le navigateur s'il est déjà ouvert
-
-L'accès au domaine https://192.168.x.x devrait fonctionner
-
-### Frontend
-
-#### Pré-requis
-
-Il est important d'utiliser la version de NodeJS à l'aide de l'outil `nvm` :
-
-```sh
-nvm use // puis nvm install si besoin est
-```
-
-Dans le cas contraire, toutes les commandes ci-dessous sont disponible dans le fichier `Makefile` en utilisant un container Docker.
-
-#### Installation
-
-Installation des dépendences :
-
-```sh
-npm install
---
-make npm-install
-```
-
-Lancement d'un serveur de développement à l'aide de Webpack. Webpack va démarrer un proxy de `127.0.0.1` sur le port 3000 et intégrer le [Hot Module Replacement](https://webpack.js.org/guides/hot-module-replacement/) des assets :
-
-```sh
-npm start
---
-make npm-start
-```
-
-Compilation des assets en mode production
-
-```sh
-npm run build
---
-make npm-build
-```
-
-## Storybook
-
-Le projet possède une story de chaque vue à l'aide de l'outil [Storybook](https://storybook.js.org/).
-
-Lancer le storybook
-
-```sh
-npm run storybook
-```
+---
 
 ## Développement
 
-Commit à la norme conventionnal commit : [documentation](doc/CONVENTIONAL COMMITS.md)
+### Commits
 
-## Tests
+Les commits doivent suivre la norme **Conventional Commits**.
 
-Lancement des tests fonctionnels Cypress via Docker
+**Format**: `<type>(<scope>): <description>`
 
-```sh
-make cypress-run
+**Exemples**:
+- `feat(championship): add automatic assignment for AFK players`
+- `fix(bid): correct tie-breaking logic in auctions`
+- `docs(readme): update installation instructions`
+
+### Git Hooks
+
+Configurer les hooks locaux:
+```bash
+make setup-hooks
 ```
 
-Utilisation de l'UI Cypress (avec le dossier bin préalablement téléchargé et copier dans le dossier _cypress_ à la racine du projet)
-
-```sh
-npm run cypress:open
-```
+---
 
 ## Déploiement
 
-### Semantic release
-- [documentation](doc/SEMANTIC RELEASE.md)
+Cette API fait partie d'un monorepo et est déployée en coordination avec l'application frontend Next.js.
 
-### Review app
-
-Il est possible de générer une review app (un environnement créé à partir de la branche Git en cours). Le nom de la branche doit être obligatoirement préfixée de `review/` (par exemple `review/login-api`).
-
-L'URL de l'environnement sera affiché depuis la merge request de la branche Git.
-
-### Démo
-
-Chaque modification sur la branche `develop` déclenche une pipeline de déploiement sur l'[environnement de démo](https://api-kop.novademo.net/).
+Voir le `CLAUDE.md` à la racine pour plus d'informations sur l'architecture globale du projet.
