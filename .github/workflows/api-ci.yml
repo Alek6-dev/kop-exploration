@@ -1,0 +1,194 @@
+name: API CI
+
+# setup → assets → tests
+on:
+    push:
+        branches: [ main ]
+        paths:
+            - 'api/**'
+            - '.github/workflows/api-ci.yml'
+    pull_request:
+        branches: [ main ]
+        paths:
+            - 'api/**'
+            - '.github/workflows/api-ci.yml'
+    workflow_call:
+
+concurrency:
+    group: api-ci-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    # ── Stage: setup + tests (lint) ──────────────────────────────────────────
+    # Equivalent: make cs-check + make stan (from internal:tests:run)
+    lint:
+        name: Lint & Static Analysis
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: api
+        steps:
+            -   uses: actions/checkout@v4
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.3'
+                    extensions: intl, pdo_mysql, zip, gd
+                    tools: composer:v2
+                    coverage: none
+
+            -   name: Cache Composer dependencies
+                uses: actions/cache@v4
+                with:
+                    path: api/vendor
+                    key: composer-${{ hashFiles('api/composer.lock') }}
+                    restore-keys: composer-
+
+            -   name: Install Composer dependencies
+                run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
+
+            -   name: Copy parameters
+                run: cp config/parameters.dist.yaml config/parameters.yaml
+
+            # Equivalent: make cs-check
+            -   name: PHP-CS-Fixer (dry-run)
+                run: vendor/bin/php-cs-fixer fix src --dry-run --diff --no-interaction
+
+            # Equivalent: make stan
+            -   name: PHPStan
+                run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --no-progress
+
+    # ── Stage: tests ─────────────────────────────────────────────────────────
+    # Equivalent: make db-test + make tests (from internal:tests:run)
+    # allow_failure: true in GitLab → continue-on-error: true
+    test:
+        name: Tests
+        runs-on: ubuntu-latest
+        continue-on-error: true
+        defaults:
+            run:
+                working-directory: api
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: symfony_test
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping -h 127.0.0.1"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+        steps:
+            -   uses: actions/checkout@v4
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.3'
+                    extensions: intl, pdo_mysql, zip, gd
+                    tools: composer:v2
+                    coverage: none
+
+            -   name: Cache Composer dependencies
+                uses: actions/cache@v4
+                with:
+                    path: api/vendor
+                    key: composer-${{ hashFiles('api/composer.lock') }}
+                    restore-keys: composer-
+
+            -   name: Install Composer dependencies
+                run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
+
+            -   name: Copy parameters
+                run: cp config/parameters.dist.yaml config/parameters.yaml
+
+            # Equivalent: cp .env.deploy .env.local (from .gitlab/global.yml before_script)
+            # Adapted from api/.env.deploy + api/.env for GitHub Actions (no Docker)
+            -   name: Create .env.local
+                run: |
+                    cat > .env.local << 'EOF'
+                    APP_ENV=test
+                    APP_DEBUG=1
+                    APP_SECRET=gh-actions-ci-secret
+                    ENVIRONMENT=test
+                    SITE_NAME=kop
+                    MYSQL_DB=symfony_test
+                    MYSQL_HOST=127.0.0.1
+                    MYSQL_PORT=3306
+                    MYSQL_USER=root
+                    MYSQL_PWD=root
+                    MYSQL_SERVER_VERSION=8
+                    MAILER_DSN=null://null
+                    MAILER_SENDER_NAME=KOP
+                    MAILER_SENDER_EMAIL=noreply@test.local
+                    MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
+                    SENTRY_DSN=
+                    SENTRY_ENV=test
+                    ELASTIC_HOST=http://localhost
+                    ELASTIC_PORT=9200
+                    JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+                    JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+                    JWT_PASSPHRASE=ci-test-passphrase
+                    URL_FRONT=https://localhost
+                    CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+                    STRIPE_MODE=test
+                    STRIPE_KEY=pk_test_fake
+                    STRIPE_SECRET=sk_test_fake
+                    STRIPE_PAYMENT_CONFIRM_WEBHOOK_SECRET=whsec_fake
+                    EOF
+
+            # Equivalent: make db-test
+            -   name: Setup test database
+                run: |
+                    php bin/console doctrine:database:create --if-not-exists -e test
+                    php bin/console doctrine:migration:migrate --no-interaction -e test
+                    php bin/console doctrine:fixtures:load --no-interaction -e test
+
+            # Equivalent: make pest-run
+            -   name: Run Pest tests
+                run: vendor/bin/pest --compact
+
+    # ── Stage: assets ────────────────────────────────────────────────────────
+    # Equivalent: internal:assets:fixtures (make npm-build-full)
+    # Uses pnpm monorepo instead of Docker npm
+    build-assets:
+        name: Build Assets
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+
+            -   name: Setup Node.js
+                uses: actions/setup-node@v4
+                with:
+                    node-version: 20
+
+            -   name: Setup pnpm
+                uses: pnpm/action-setup@v4
+                with:
+                    version: 9.15.0
+
+            -   name: Cache pnpm store
+                uses: actions/cache@v4
+                with:
+                    path: ~/.local/share/pnpm/store
+                    key: pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+                    restore-keys: pnpm-store-
+
+            -   name: Install dependencies
+                run: pnpm install --frozen-lockfile
+
+            # Equivalent: make npm-build-full → npm run build → encore production
+            -   name: Build API assets
+                run: pnpm --filter @kop/api run build
+
+            # Artifacts equivalent to GitLab: public/assets/, public/bundles/
+            -   name: Upload assets artifact
+                uses: actions/upload-artifact@v4
+                with:
+                    name: api-assets
+                    path: api/public/assets/
+                    retention-days: 1
