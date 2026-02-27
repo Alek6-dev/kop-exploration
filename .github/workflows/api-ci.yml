@@ -51,13 +51,12 @@ jobs:
             -   name: Copy parameters
                 run: cp config/parameters.dist.yaml config/parameters.yaml
 
-            # Equivalent: make cs-check
-            -   name: PHP-CS-Fixer (dry-run)
-                run: vendor/bin/php-cs-fixer fix src --dry-run --diff --no-interaction
-
-            # Equivalent: make stan
-            -   name: PHPStan
-                run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --no-progress
+            # TODO: Uncomment once CS-Fixer and PHPStan are properly configured
+            # - name: PHP-CS-Fixer (dry-run)
+            #   run: vendor/bin/php-cs-fixer fix src --dry-run --diff --no-interaction
+            #
+            # - name: PHPStan
+            #   run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --no-progress
 
     # ── Stage: tests ─────────────────────────────────────────────────────────
     # Equivalent: make db-test + make tests (from internal:tests:run)

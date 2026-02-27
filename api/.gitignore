@@ -61,6 +61,10 @@ php.log
 .bash_history
 ###< docker ###
 
+###> ssh ###
+.ssh/
+###< ssh ###
+
 ###> api-platform ###
 /public/openapi.json
 ###< api-platform ###
