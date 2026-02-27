@@ -19,8 +19,8 @@ set('ssh_multiplexing', false);
 set('bin/composer', '{{bin/php}} {{release_path}}/composer.phar');
 set('composer_options', '--no-dev --no-scripts --optimize-autoloader --no-interaction --prefer-dist');
 
-// Shared files & dirs (same as before)
-add('shared_files', ['config/parameters.yaml']);
+// Shared files & dirs
+add('shared_files', ['.env.local', 'config/parameters.yaml']);
 add('shared_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt']);
 add('writable_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
 
