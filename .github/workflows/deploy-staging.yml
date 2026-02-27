@@ -58,16 +58,13 @@ jobs:
                 with:
                     php-version: '8.3'
 
-            -   name: Install Composer dependencies
-                run: composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts
-                working-directory: api
-
             -   name: Deploy with Deployer
                 uses: deployphp/action@v1
                 with:
                     dep: deploy staging --tag=${{ inputs.ref || github.ref_name }}
                     sub-directory: api
                     private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+                    deployer-version: "7.5.12"
                     verbosity: -vv
 
     # ── Deploy App ──────────────────────────────────────────────────────────
