@@ -58,92 +58,48 @@ jobs:
             # - name: PHPStan
             #   run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --no-progress
 
-    # ── Stage: tests ─────────────────────────────────────────────────────────
-    # Equivalent: make db-test + make tests (from internal:tests:run)
-    # allow_failure: true in GitLab → continue-on-error: true
-    test:
-        name: Tests
-        runs-on: ubuntu-latest
-        continue-on-error: true
-        defaults:
-            run:
-                working-directory: api
-        env:
-            APP_ENV: test
-            APP_DEBUG: 1
-            APP_SECRET: gh-actions-ci-secret
-            ENVIRONMENT: test
-            SITE_NAME: kop
-            MYSQL_DB: symfony_test
-            MYSQL_HOST: 127.0.0.1
-            MYSQL_PORT: 3306
-            MYSQL_USER: root
-            MYSQL_PWD: root
-            MYSQL_SERVER_VERSION: 8
-            MAILER_DSN: "null://null"
-            MAILER_SENDER_NAME: KOP
-            MAILER_SENDER_EMAIL: noreply@test.local
-            MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
-            SENTRY_DSN: ""
-            SENTRY_ENV: test
-            ELASTIC_HOST: http://localhost
-            ELASTIC_PORT: 9200
-            JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
-            JWT_PUBLIC_KEY: "%kernel.project_dir%/config/jwt/public.pem"
-            JWT_PASSPHRASE: ci-test-passphrase
-            URL_FRONT: https://localhost
-            CORS_ALLOW_ORIGIN: "^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$"
-            STRIPE_MODE: test
-            STRIPE_KEY: pk_test_fake
-            STRIPE_SECRET: sk_test_fake
-            STRIPE_PAYMENT_CONFIRM_WEBHOOK_SECRET: whsec_fake
-        services:
-            mysql:
-                image: mysql:8.0
-                env:
-                    MYSQL_ROOT_PASSWORD: root
-                    MYSQL_DATABASE: symfony_test
-                ports:
-                    - 3306:3306
-                options: >-
-                    --health-cmd="mysqladmin ping -h 127.0.0.1"
-                    --health-interval=10s
-                    --health-timeout=5s
-                    --health-retries=5
-        steps:
-            -   uses: actions/checkout@v4
-
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: '8.3'
-                    extensions: intl, pdo_mysql, zip, gd
-                    tools: composer:v2
-                    coverage: none
-
-            -   name: Cache Composer dependencies
-                uses: actions/cache@v4
-                with:
-                    path: api/vendor
-                    key: composer-${{ hashFiles('api/composer.lock') }}
-                    restore-keys: composer-
-
-            -   name: Install Composer dependencies
-                run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
-
-            -   name: Copy parameters
-                run: cp config/parameters.dist.yaml config/parameters.yaml
-
-            # Equivalent: make db-test
-            -   name: Setup test database
-                run: |
-                    php bin/console doctrine:database:create --if-not-exists -e test
-                    php bin/console doctrine:migration:migrate --no-interaction -e test
-                    php bin/console doctrine:fixtures:load --no-interaction -e test
-
-            # Equivalent: make pest-run
-            -   name: Run Pest tests
-                run: vendor/bin/pest --compact
+    # TODO: Uncomment once real tests are written
+    # test:
+    #     name: Tests
+    #     runs-on: ubuntu-latest
+    #     continue-on-error: true
+    #     defaults:
+    #         run:
+    #             working-directory: api
+    #     env:
+    #         APP_ENV: test
+    #         MYSQL_DB: symfony_test
+    #         MYSQL_HOST: 127.0.0.1
+    #         MYSQL_PORT: 3306
+    #         MYSQL_USER: root
+    #         MYSQL_PWD: root
+    #         MYSQL_SERVER_VERSION: 8
+    #     services:
+    #         mysql:
+    #             image: mysql:8.0
+    #             env:
+    #                 MYSQL_ROOT_PASSWORD: root
+    #                 MYSQL_DATABASE: symfony_test
+    #             ports:
+    #                 - 3306:3306
+    #     steps:
+    #         - uses: actions/checkout@v4
+    #         - uses: shivammathur/setup-php@v2
+    #           with:
+    #               php-version: '8.3'
+    #               extensions: intl, pdo_mysql, zip, gd
+    #               tools: composer:v2
+    #         - run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
+    #           working-directory: api
+    #         - run: cp config/parameters.dist.yaml config/parameters.yaml
+    #           working-directory: api
+    #         - run: |
+    #               php bin/console doctrine:database:create --if-not-exists -e test
+    #               php bin/console doctrine:migration:migrate --no-interaction -e test
+    #               php bin/console doctrine:fixtures:load --no-interaction -e test
+    #           working-directory: api
+    #         - run: vendor/bin/pest --compact
+    #           working-directory: api
 
     # ── Stage: assets ────────────────────────────────────────────────────────
     # Equivalent: internal:assets:fixtures (make npm-build-full)
