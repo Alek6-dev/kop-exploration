@@ -57,15 +57,22 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: '8.3'
+                    tools: composer:v2
+
+            -   name: Install Deployer
+                run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
+                working-directory: api
+
+            -   name: Setup SSH
+                run: |
+                    mkdir -p ~/.ssh
+                    echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                    chmod 600 ~/.ssh/id_rsa
+                    ssh-keyscan -H ${{ vars.SSH_HOST }} >> ~/.ssh/known_hosts
 
             -   name: Deploy with Deployer
-                uses: deployphp/action@v1
-                with:
-                    dep: deploy staging --tag=${{ inputs.ref || github.ref_name }}
-                    sub-directory: api
-                    private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-                    deployer-version: "7.5.12"
-                    verbosity: -vv
+                run: vendor/bin/dep deploy staging --tag=${{ inputs.ref || github.ref_name }} -vvv
+                working-directory: api
 
     # ── Deploy App ──────────────────────────────────────────────────────────
     # Script lives in app/.github/scripts/ (portable if repo is split)
