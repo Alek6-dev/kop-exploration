@@ -1,0 +1,104 @@
+name: Deploy Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'What to deploy'
+        required: true
+        type: choice
+        options:
+          - both
+          - api
+          - app
+      ref:
+        description: 'Tag, branch or SHA to deploy (leave empty for current branch)'
+        required: false
+        type: string
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  # ── CI gates (reusable workflows) ───────────────────────────────────────
+  api-ci:
+    name: API CI
+    if: inputs.deploy_target == 'both' || inputs.deploy_target == 'api'
+    uses: ./.github/workflows/api-ci.yml
+
+  app-ci:
+    name: App CI
+    if: inputs.deploy_target == 'both' || inputs.deploy_target == 'app'
+    uses: ./.github/workflows/app-ci.yml
+
+  # ── Deploy API ──────────────────────────────────────────────────────────
+  # Uses Deployer via deployphp/action to deploy the Symfony API
+  # deploy.php config lives in api/ (portable if repo is split)
+  deploy-api:
+    name: Deploy API
+    needs: api-ci
+    if: inputs.deploy_target == 'both' || inputs.deploy_target == 'api'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Download API assets
+        uses: actions/download-artifact@v4
+        with:
+          name: api-assets
+          path: api/public/assets/
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Deploy with Deployer
+        uses: deployphp/action@v1
+        with:
+          dep: deploy staging --tag=${{ inputs.ref || github.ref_name }}
+          sub-directory: api
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          deployer-version: '7'
+          verbosity: -vv
+
+  # ── Deploy App ──────────────────────────────────────────────────────────
+  # Script lives in app/.github/scripts/ (portable if repo is split)
+  deploy-app:
+    name: Deploy App
+    needs: app-ci
+    if: inputs.deploy_target == 'both' || inputs.deploy_target == 'app'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          cat >> ~/.ssh/config << 'SSHEOF'
+          Host staging
+            HostName ${{ secrets.SSH_HOST }}
+            User ${{ secrets.SSH_USER }}
+            IdentityFile ~/.ssh/deploy_key
+          SSHEOF
+          sed -i 's/^          //' ~/.ssh/config
+
+      - name: Deploy App to staging
+        run: bash app/.github/scripts/deploy-staging.sh
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          APP_PATH: /home/${{ secrets.SSH_USER }}/kop-app
+          DEPLOY_REF: ${{ inputs.ref || github.ref_name }}
