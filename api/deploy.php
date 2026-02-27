@@ -17,7 +17,13 @@ set('ssh_multiplexing', false);
 
 // Composer: PHAR installed on the server
 set('bin/composer', '{{bin/php}} {{release_path}}/composer.phar');
-set('composer_options', '--no-dev --no-scripts --optimize-autoloader --no-interaction --prefer-dist');
+set('composer_options', function () {
+    $options = '--no-scripts --optimize-autoloader --no-interaction --prefer-dist';
+    if (get('stage') === 'prod') {
+        $options = '--no-dev ' . $options;
+    }
+    return $options;
+});
 
 // Shared files & dirs
 add('shared_files', ['.env.local', 'config/parameters.yaml']);
