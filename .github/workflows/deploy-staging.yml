@@ -109,3 +109,80 @@ jobs:
                     SSH_HOST: ${{ vars.SSH_HOST }}
                     APP_PATH: /home/${{ vars.SSH_USER }}/kop-app
                     DEPLOY_REF: ${{ inputs.ref || github.ref_name }}
+
+    # ── Discord Notifications ─────────────────────────────────────────────
+    notify-success:
+        name: Notify Success
+        if: always() && !cancelled() && !contains(needs.*.result, 'failure')
+        needs: [deploy-api, deploy-app]
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Send Discord success notification
+                env:
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                run: |
+                    DEPLOY_REF="${{ inputs.ref || github.ref_name }}"
+                    TARGET="${{ inputs.deploy_target }}"
+                    ACTOR="${{ github.actor }}"
+                    RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+                    URLS=""
+                    if [[ "$TARGET" == "both" || "$TARGET" == "api" ]]; then
+                      URLS="${URLS}> **API**: https://staging-api.king-of-paddock.fr\n> **Admin**: https://staging-api.king-of-paddock.fr/admin\n"
+                    fi
+                    if [[ "$TARGET" == "both" || "$TARGET" == "app" ]]; then
+                      URLS="${URLS}> **App**: https://staging.king-of-paddock.fr\n"
+                    fi
+
+                    curl -s -H "Content-Type: application/json" \
+                      -d "{
+                        \"embeds\": [{
+                          \"title\": \"Deployment Staging — Success\",
+                          \"color\": 3066993,
+                          \"fields\": [
+                            { \"name\": \"Tag / Ref\", \"value\": \"\`${DEPLOY_REF}\`\", \"inline\": true },
+                            { \"name\": \"Target\", \"value\": \"\`${TARGET}\`\", \"inline\": true },
+                            { \"name\": \"Triggered by\", \"value\": \"${ACTOR}\", \"inline\": true }
+                          ],
+                          \"description\": \"${URLS}\n[Voir le workflow](${RUN_URL})\",
+                          \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                        }]
+                      }" "$DISCORD_WEBHOOK_URL"
+
+    notify-failure:
+        name: Notify Failure
+        if: always() && contains(needs.*.result, 'failure')
+        needs: [deploy-api, deploy-app]
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Send Discord failure notification
+                env:
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                run: |
+                    DEPLOY_REF="${{ inputs.ref || github.ref_name }}"
+                    TARGET="${{ inputs.deploy_target }}"
+                    ACTOR="${{ github.actor }}"
+                    RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+                    FAILED_JOBS=""
+                    if [[ "${{ needs.deploy-api.result }}" == "failure" ]]; then
+                      FAILED_JOBS="${FAILED_JOBS}> - Deploy API\n"
+                    fi
+                    if [[ "${{ needs.deploy-app.result }}" == "failure" ]]; then
+                      FAILED_JOBS="${FAILED_JOBS}> - Deploy App\n"
+                    fi
+
+                    curl -s -H "Content-Type: application/json" \
+                      -d "{
+                        \"embeds\": [{
+                          \"title\": \"Deployment Staging — Failed\",
+                          \"color\": 15158332,
+                          \"fields\": [
+                            { \"name\": \"Tag / Ref\", \"value\": \"\`${DEPLOY_REF}\`\", \"inline\": true },
+                            { \"name\": \"Target\", \"value\": \"\`${TARGET}\`\", \"inline\": true },
+                            { \"name\": \"Triggered by\", \"value\": \"${ACTOR}\", \"inline\": true }
+                          ],
+                          \"description\": \"**Jobs en échec :**\n${FAILED_JOBS}\n[Voir les logs du workflow](${RUN_URL})\",
+                          \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                        }]
+                      }" "$DISCORD_WEBHOOK_URL"
