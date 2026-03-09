@@ -50,10 +50,10 @@ task('chmod:var', function () {
     run('chmod -R 777 {{release_path}}/var');
 });
 
-// Hooks (same order as original)
+// Hooks
 before('deploy:vendors', 'deploy:install_composer');
+after('deploy:vendors', 'chmod:var');
 before('deploy:symlink', 'database:migrate');
 before('deploy:symlink', 'upload:assets');
 after('upload:assets', 'deploy:assets:install');
-after('deploy:assets:install', 'chmod:var');
 after('deploy:failed', 'deploy:unlock');
