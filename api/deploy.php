@@ -46,14 +46,16 @@ task('deploy:assets:install', function () {
 });
 
 // Task: Fix var/ permissions
+// setfacl grants www-data full access on existing AND future files (default ACL)
 task('chmod:var', function () {
-    run('chmod -R 777 {{release_path}}/var');
+    run('setfacl -R -m u:www-data:rwX {{release_path}}/var');
+    run('setfacl -dR -m u:www-data:rwX {{release_path}}/var');
 });
 
 // Hooks
 before('deploy:vendors', 'deploy:install_composer');
-after('deploy:vendors', 'chmod:var');
 before('deploy:symlink', 'database:migrate');
 before('deploy:symlink', 'upload:assets');
 after('upload:assets', 'deploy:assets:install');
+before('deploy:symlink', 'chmod:var');
 after('deploy:failed', 'deploy:unlock');
