@@ -13,6 +13,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             'cookie_secure' => 'auto',
             'cookie_samesite' => 'lax',
             'storage_factory_id' => 'session.storage.factory.native',
+            'save_path' => '%kernel.project_dir%/var/sessions',
         ],
         'php_errors' => [
             'log' => true,

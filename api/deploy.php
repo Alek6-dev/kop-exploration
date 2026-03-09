@@ -46,28 +46,9 @@ task('deploy:assets:install', function () {
 });
 
 // Task: Fix var/ permissions
-// Override inherited default ACL (home has rX only for www-data) with rwX
 task('chmod:var', function () {
-    // Release var/ — staging-kop owns these so setfacl works
-    run('setfacl -R -m u:www-data:rwX {{release_path}}/var');
-    run('setfacl -dR -m u:www-data:rwX {{release_path}}/var');
-    // Shared var/ (logs) — ignore errors on files already owned by www-data
-    run('setfacl -R -m u:www-data:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
-    run('setfacl -dR -m u:www-data:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
-    run('setfacl -R -m u:staging-kop:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
-    run('setfacl -dR -m u:staging-kop:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
-});
-
-// Task: Fix old releases permissions before cleanup
-task('deploy:cleanup:permissions', function () {
-    $releases = get('releases_list');
-    $keep = get('keep_releases');
-    $releasesToRemove = array_slice($releases, $keep);
-    foreach ($releasesToRemove as $release) {
-        $releasePath = '{{deploy_path}}/releases/' . $release;
-        // Give staging-kop full access to files created by www-data at runtime
-        run("setfacl -R -m u:staging-kop:rwX $releasePath/var 2>/dev/null || true");
-    }
+    run("chmod -R 777 {{release_path}}/var");
+    run("chmod -R 777 {{deploy_path}}/shared/var 2>/dev/null || true");
 });
 
 // Hooks
@@ -76,5 +57,5 @@ before('deploy:symlink', 'database:migrate');
 before('deploy:symlink', 'upload:assets');
 after('upload:assets', 'deploy:assets:install');
 before('deploy:symlink', 'chmod:var');
-before('deploy:cleanup', 'deploy:cleanup:permissions');
+
 after('deploy:failed', 'deploy:unlock');
