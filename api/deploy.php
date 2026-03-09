@@ -46,13 +46,14 @@ task('deploy:assets:install', function () {
 });
 
 // Task: Fix var/ permissions
-// setfacl grants www-data full access on existing AND future files (default ACL)
-// Applied to both release var/ and shared var/ (logs are in shared)
+// staging-kop:www-data share the same group, setgid ensures new files inherit www-data group
 task('chmod:var', function () {
-    run('setfacl -R -m u:www-data:rwX {{release_path}}/var');
-    run('setfacl -dR -m u:www-data:rwX {{release_path}}/var');
-    run('setfacl -R -m u:www-data:rwX {{deploy_path}}/shared/var');
-    run('setfacl -dR -m u:www-data:rwX {{deploy_path}}/shared/var');
+    // Release var/ — group writable + setgid on dirs
+    run('chmod -R g+rwX {{release_path}}/var');
+    run('find {{release_path}}/var -type d -exec chmod g+s {} +');
+    // Shared var/ (logs) — same, ignore errors on files we don't own
+    run('chmod -R g+rwX {{deploy_path}}/shared/var 2>/dev/null || true');
+    run('find {{deploy_path}}/shared/var -type d -exec chmod g+s {} + 2>/dev/null || true');
 });
 
 // Hooks
