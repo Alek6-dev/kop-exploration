@@ -58,10 +58,22 @@ task('chmod:var', function () {
     run('find {{deploy_path}}/shared/var -type d -exec chmod g+s {} + 2>/dev/null || true');
 });
 
+// Task: Fix old releases permissions before cleanup
+task('deploy:cleanup:permissions', function () {
+    $releases = get('releases_list');
+    $keep = get('keep_releases');
+    $releasesToRemove = array_slice($releases, $keep);
+    foreach ($releasesToRemove as $release) {
+        $releasePath = '{{deploy_path}}/releases/' . $release;
+        run("chmod -R u+rwX $releasePath 2>/dev/null || true");
+    }
+});
+
 // Hooks
 before('deploy:vendors', 'deploy:install_composer');
 before('deploy:symlink', 'database:migrate');
 before('deploy:symlink', 'upload:assets');
 after('upload:assets', 'deploy:assets:install');
 before('deploy:symlink', 'chmod:var');
+before('deploy:cleanup', 'deploy:cleanup:permissions');
 after('deploy:failed', 'deploy:unlock');
