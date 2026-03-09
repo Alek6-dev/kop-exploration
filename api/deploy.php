@@ -46,12 +46,14 @@ task('deploy:assets:install', function () {
 });
 
 // Task: Fix var/ permissions
-// staging-kop:www-data share the same group, setgid ensures new files inherit www-data group
+// chgrp to www-data + setgid so runtime files (profiler, logs) are group-writable
 task('chmod:var', function () {
-    // Release var/ — group writable + setgid on dirs
+    // Release var/ — set group to www-data, group writable, setgid on dirs
+    run('chgrp -R www-data {{release_path}}/var');
     run('chmod -R g+rwX {{release_path}}/var');
     run('find {{release_path}}/var -type d -exec chmod g+s {} +');
-    // Shared var/ (logs) — same, ignore errors on files we don't own
+    // Shared var/ (logs) — same, ignore errors on files owned by www-data
+    run('chgrp -R www-data {{deploy_path}}/shared/var 2>/dev/null || true');
     run('chmod -R g+rwX {{deploy_path}}/shared/var 2>/dev/null || true');
     run('find {{deploy_path}}/shared/var -type d -exec chmod g+s {} + 2>/dev/null || true');
 });
