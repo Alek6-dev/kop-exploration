@@ -47,9 +47,12 @@ task('deploy:assets:install', function () {
 
 // Task: Fix var/ permissions
 // setfacl grants www-data full access on existing AND future files (default ACL)
+// Applied to both release var/ and shared var/ (logs are in shared)
 task('chmod:var', function () {
     run('setfacl -R -m u:www-data:rwX {{release_path}}/var');
     run('setfacl -dR -m u:www-data:rwX {{release_path}}/var');
+    run('setfacl -R -m u:www-data:rwX {{deploy_path}}/shared/var');
+    run('setfacl -dR -m u:www-data:rwX {{deploy_path}}/shared/var');
 });
 
 // Hooks
