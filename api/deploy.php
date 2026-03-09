@@ -46,16 +46,16 @@ task('deploy:assets:install', function () {
 });
 
 // Task: Fix var/ permissions
-// chgrp to www-data + setgid so runtime files (profiler, logs) are group-writable
+// Override inherited default ACL (home has rX only for www-data) with rwX
 task('chmod:var', function () {
-    // Release var/ — set group to www-data, group writable, setgid on dirs
-    run('chgrp -R www-data {{release_path}}/var');
-    run('chmod -R g+rwX {{release_path}}/var');
-    run('find {{release_path}}/var -type d -exec chmod g+s {} +');
-    // Shared var/ (logs) — same, ignore errors on files owned by www-data
-    run('chgrp -R www-data {{deploy_path}}/shared/var 2>/dev/null || true');
-    run('chmod -R g+rwX {{deploy_path}}/shared/var 2>/dev/null || true');
-    run('find {{deploy_path}}/shared/var -type d -exec chmod g+s {} + 2>/dev/null || true');
+    // Release var/ — staging-kop owns these so setfacl works
+    run('setfacl -R -m u:www-data:rwX {{release_path}}/var');
+    run('setfacl -dR -m u:www-data:rwX {{release_path}}/var');
+    // Shared var/ (logs) — ignore errors on files already owned by www-data
+    run('setfacl -R -m u:www-data:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
+    run('setfacl -dR -m u:www-data:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
+    run('setfacl -R -m u:staging-kop:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
+    run('setfacl -dR -m u:staging-kop:rwX {{deploy_path}}/shared/var 2>/dev/null || true');
 });
 
 // Task: Fix old releases permissions before cleanup
@@ -65,7 +65,8 @@ task('deploy:cleanup:permissions', function () {
     $releasesToRemove = array_slice($releases, $keep);
     foreach ($releasesToRemove as $release) {
         $releasePath = '{{deploy_path}}/releases/' . $release;
-        run("chmod -R u+rwX $releasePath 2>/dev/null || true");
+        // Give staging-kop full access to files created by www-data at runtime
+        run("setfacl -R -m u:staging-kop:rwX $releasePath/var 2>/dev/null || true");
     }
 });
 
