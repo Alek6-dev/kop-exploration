@@ -42,7 +42,7 @@ task('upload:assets', function () {
 
 // Task: Symfony assets:install
 task('deploy:assets:install', function () {
-    run('cd {{release_path}} && {{bin/console}} assets:install --env=prod');
+    run('cd {{release_path}} && {{bin/console}} assets:install');
 });
 
 // Task: Fix var/ permissions
@@ -51,11 +51,17 @@ task('chmod:var', function () {
     run("chmod -R 777 {{deploy_path}}/shared/var 2>/dev/null || true");
 });
 
+// Task: Warmup cache (creates Doctrine proxies, etc.)
+task('deploy:cache:warmup', function () {
+    run("cd {{release_path}} && {{bin/console}} cache:warmup");
+});
+
 // Hooks
 before('deploy:vendors', 'deploy:install_composer');
 before('deploy:symlink', 'database:migrate');
 before('deploy:symlink', 'upload:assets');
 after('upload:assets', 'deploy:assets:install');
-before('deploy:symlink', 'chmod:var');
+after('deploy:symlink', 'deploy:cache:warmup');
+after('deploy:cache:warmup', 'chmod:var');
 
 after('deploy:failed', 'deploy:unlock');
