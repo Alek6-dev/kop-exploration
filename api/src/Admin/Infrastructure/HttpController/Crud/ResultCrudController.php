@@ -51,7 +51,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Exception\ForbiddenActionException;
 use EasyCorp\Bundle\EasyAdminBundle\Exception\InsufficientEntityPermissionException;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Factory\ActionFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -302,9 +303,9 @@ final class ResultCrudController extends AbstractCrudController
         }
 
         $context->getEntity()->setInstance($this->createEntity($context->getEntity()->getFqcn()));
-        $this->container->get(EntityFactory::class)->processFields($context->getEntity(), FieldCollection::new($this->configureFields(Crud::PAGE_NEW)));
+        $this->container->get(FieldFactory::class)->processFields($context->getEntity(), FieldCollection::new($this->configureFields(Crud::PAGE_NEW)));
         $context->getCrud()->setFieldAssets($this->getFieldAssets($context->getEntity()->getFields()));
-        $this->container->get(EntityFactory::class)->processActions($context->getEntity(), $context->getCrud()->getActionsConfig());
+        $this->container->get(ActionFactory::class)->processEntityActions($context->getEntity(), $context->getCrud()->getActionsConfig());
 
         $newForm = $this->createNewForm($context->getEntity(), $context->getCrud()->getNewFormOptions(), $context);
         $newForm->handleRequest($context->getRequest());
@@ -534,6 +535,8 @@ final class ResultCrudController extends AbstractCrudController
     {
         return array_merge(parent::getSubscribedServices(), [
             'result_repository' => ResultRepositoryInterface::class,
+            FieldFactory::class => FieldFactory::class,
+            ActionFactory::class => ActionFactory::class,
         ]);
     }
 
