@@ -27,8 +27,8 @@ set('composer_options', function () {
 
 // Shared files & dirs
 add('shared_files', ['.env.local', 'config/parameters.yaml']);
-add('shared_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
-add('writable_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
+set('shared_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
+set('writable_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
 
 // Task: Install Composer PHAR
 task('deploy:install_composer', function () {
