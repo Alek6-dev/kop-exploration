@@ -27,7 +27,7 @@ set('composer_options', function () {
 
 // Shared files & dirs
 add('shared_files', ['.env.local', 'config/parameters.yaml']);
-add('shared_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt']);
+add('shared_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
 add('writable_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
 
 // Task: Install Composer PHAR
@@ -45,10 +45,9 @@ task('deploy:assets:install', function () {
     run('cd {{release_path}} && {{bin/console}} assets:install');
 });
 
-// Task: Fix var/ permissions
+// Task: Fix var/ permissions (var is shared, so only one path to chmod)
 task('chmod:var', function () {
-    run("chmod -R 777 {{release_path}}/var");
-    run("chmod -R 777 {{deploy_path}}/shared/var 2>/dev/null || true");
+    run("chmod -R 777 {{deploy_path}}/shared/var");
 });
 
 // Task: Warmup cache (creates Doctrine proxies, etc.)
