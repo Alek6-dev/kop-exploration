@@ -2,8 +2,6 @@
 name: ✨ Feature
 about: Proposer une nouvelle fonctionnalité
 title: "[FEATURE] "
-labels: "type/feature,track/production"
-assignees: ""
 ---
 
 ## Contexte
