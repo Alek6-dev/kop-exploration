@@ -2,8 +2,6 @@
 name: 🐛 Bug
 about: Signaler un comportement incorrect sur l'application
 title: "[BUG] "
-labels: "type/bug,track/production"
-assignees: ""
 ---
 
 ## Description
@@ -18,13 +16,16 @@ Ce qui devrait se passer normalement.
 3. 
 
 ## Environnement
-- [ ] Production
-- [ ] Staging
+- [ ] 🚀 Production
+- [ ] 🔍 Staging
+- [ ] 🔀 Server
+- [ ] 🧪 Lab
 
 ## Impact
 - [ ] 🔴 Critique — bloquant pour les utilisateurs
 - [ ] 🟠 Élevé — dégradation significative
-- [ ] 🟡 Normal — contournement possible
+- [ ] 🟢 Normal — contournement possible
+- [ ] 🔵 Faible - quand on a le temps
 
 ## Logs / Screenshots
 <!-- Ajoutez tout élément utile ici -->
