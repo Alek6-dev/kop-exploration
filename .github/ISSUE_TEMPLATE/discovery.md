@@ -2,8 +2,6 @@
 name: 🔍 Discovery
 about: Explorer un besoin ou une idée avant de le planifier
 title: "[DISCOVERY] "
-labels: "type/rfc,track/exploration"
-assignees: ""
 ---
 
 ## Problème / Opportunité
