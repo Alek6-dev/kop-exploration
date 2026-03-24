@@ -2,8 +2,6 @@
 name: 🗺️ Epic
 about: Chantier transverse regroupant plusieurs issues
 title: "[EPIC] "
-labels: "type/epic,track/chantier"
-assignees: ""
 ---
 
 ## Objectif
