@@ -1,0 +1,24 @@
+{% set required = required ?? false %}
+{% set checkboxClassName = checkboxClassName ?? 'checkbox ' %}
+{% set checked = checked ?? false %}
+{% set rgpd = rgpd ?? false %}
+{% set inputClassName = inputClassName ?? '' %}
+
+<input
+  type="checkbox"
+  name="{{ name ?? '' }}"
+  id="{{ id ?? '' }}"
+  class="checkbox show-for-sr {{ inputClassName }}"
+  value="{{ value ?? '' }}"
+  {% if defaultValue is defined %}data-default="{{ defaultValue }}"{% endif %}
+  {% if required %}required{% endif %}
+  {% if checked %}checked{% endif %}
+>
+<label for="{{ id ?? '' }}" class=" {{ checkboxClassName }}">
+    <span class="text {% if rgpd %}text-small{% endif %}">
+    {{ label }}
+    {% if required %}
+        *
+    {% endif %}
+    </span>
+</label>

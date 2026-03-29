@@ -1,0 +1,6 @@
+{% set className = className ?? "" %}
+
+<a href="{{ href }}" class="menu-item {{ className }}">
+    {% include 'icons/menu/' ~ icon ~ '.html.twig' %}
+    <span>{{ title }}</span>
+</a>

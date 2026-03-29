@@ -1,0 +1,10 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - $DOCKER_NODE_PORT:3000
+    restart: always
+    extra_hosts:
+      - "api-kop.novademo.net:192.168.1.51"

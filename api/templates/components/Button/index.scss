@@ -1,0 +1,23 @@
+@layer components {
+  .btn {
+    @apply rounded uppercase flex-centering h-10 w-full px-4 outline-none;
+
+    &-primary {
+      @apply gradient-primary-white text-black font-bold border border-white/25;
+      box-shadow: 0 0 10px 0 rgba(241,196,69,0.46);
+    }
+
+    &-secondary {
+      @apply gradient-gray-white text-black font-bold border border-white/25;
+      box-shadow: 0 0 10px 0 rgba(255,255,255,0.32);
+    }
+
+    &-light {
+      @apply h-8 text-white px-3 border border-white/10 text-sm focus:border-white/25;
+    }
+
+    &:disabled, &[disabled] {
+      @apply opacity-20 text-black/70;
+    }
+  }
+}

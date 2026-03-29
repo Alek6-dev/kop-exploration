@@ -1,0 +1,50 @@
+@layer components {
+    .results-table {
+        th, td {
+            @apply h-5 p-1 text-center;
+
+            &:first-child, &:nth-child(2) {
+                @apply text-left;
+            }
+
+            &:last-child {
+                @apply text-right;
+            }
+        }
+
+        th {
+            @apply py-0;
+        }
+
+        td {
+            @apply border-b border-white/[.03];
+
+            &:first-child {
+                @apply border-b-0;
+            }
+        }
+
+        tr:last-child td {
+            @apply border-b-0;
+        }
+
+        .impact-positive {
+            @apply text-green relative;
+        }
+
+        .impact-negative {
+            @apply text-red relative;
+        }
+
+        .impact-positive::before {
+            content: url("/assets/icons/small/small-arrow-up.svg");
+            @apply inline-block mr-1 -scale-y-100;
+        }
+
+        .impact-negative::before {
+            content: url("/assets/icons/small/small-arrow.svg");
+            @apply inline-block mr-1;
+        }
+
+    }
+}

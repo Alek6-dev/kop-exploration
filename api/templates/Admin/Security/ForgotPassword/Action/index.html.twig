@@ -1,0 +1,28 @@
+{% extends 'Admin/Security/ForgotPassword/base.html.twig' %}
+
+{% block page_title %}{{ title | trans }}{% endblock %}
+
+{% block form %}
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_label(form.password.first) }}
+            <div class="form-widget">
+                {{ form_widget(form.password.first) }}
+            </div>
+            {{ form_help(form.password.first) }}
+            {{ form_errors(form.password.first) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.password.second) }}
+            <div class="form-widget">
+                {{ form_widget(form.password.second) }}
+            </div>
+            {{ form_errors(form.password.second) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_widget(form.submit) }}
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

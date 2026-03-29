@@ -1,0 +1,24 @@
+/* figtree-regular - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 400;
+  src: url('#{$fonts-folder}/figtree-v5-latin-regular.woff2') format('woff2');
+}
+/* figtree-700 - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 700;
+  src: url('#{$fonts-folder}/figtree-v5-latin-700.woff2') format('woff2');
+}
+/* panchang-700 - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Panchang';
+  font-style: normal;
+  font-weight: 700;
+  src: url('#{$fonts-folder}/panchang-bold.woff2') format('woff2');
+}

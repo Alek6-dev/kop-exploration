@@ -1,0 +1,39 @@
+{% set label = label ?? null %}
+{% set listLabel = listLabel ?? null %}
+{% set listClassName = listClassName ?? '' %}
+{% set itemClassName = itemClassName ?? '' %}
+{% set listId = 'list-' ~ random() %}
+{% set listInline = listInline ?? true %}
+{% set spacer = spacer ?? '6' %}
+
+{% set labelAttr = {
+    label: listLabel,
+    id: listId,
+    required: false
+} %}
+
+<div id="{{ listId }}">
+    {% if listLabel %}
+        {% include 'components/Form/Label/index.html.twig' with labelAttr %}
+    {% endif %}
+
+    <ul class="no-bullet {{ listClassName }} {% if listInline %}block-grid{% endif %}">
+        {% for item in items %}
+            <li class="{{ item.itemClassName is defined ? item.itemClassName : itemClassName }} {% if listInline %}block-grid{% endif %}">
+                {% if typeList == 'checkbox' %}
+                    {% include 'components/Form/Checkbox/index.html.twig' with item %}
+                {% elseif typeList == 'radio' %}
+                    {% include 'components/Form/Radio/index.html.twig' with item %}
+                {% elseif typeList == 'input' %}
+                    {% include 'components/Form/Input/index.html.twig' with item %}
+                {% endif %}
+
+                {% if listInline and not loop.last %}
+                    {% include 'components/Spacer/index.html.twig' with {
+                        width: spacer
+                    }%}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>

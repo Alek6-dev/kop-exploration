@@ -1,0 +1,19 @@
+{% set required = required ?? true %}
+{% set checked = checked ?? false %}
+{% set checked = checked ?? false %}
+{% set radioClassName = radioClassName ?? 'radio ' %}
+
+<input
+  type="radio"
+  name="{{ name ?? '' }}"
+  id="{{ id ?? value ?? '' }}"
+  class="show-for-sr"
+  value="{{ value ?? '' }}"
+  {% if required is defined and required %}required{% endif %}
+  {% if checked is defined and checked %}checked{% endif %}
+>
+<label for="{{ id ?? value ?? '' }}" class="{{ radioClassName }}">
+    <span class="text {% if rgpd %}text-small{% endif %}">
+        {{ label }}
+    </span>
+</label>

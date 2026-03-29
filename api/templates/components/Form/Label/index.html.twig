@@ -1,0 +1,9 @@
+{% set labelClassName = labelClassName ?? '' %}
+{% set required = required ?? true %}
+
+<label class="label {{ labelClassName }}" for="{{ id }}">
+    {{ label }}
+    {% if required %}
+        *
+    {% endif %}
+</label>

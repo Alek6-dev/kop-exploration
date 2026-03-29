@@ -1,0 +1,93 @@
+ROLE_SUPER_ADMIN: 'Super Administrateur'
+
+forgot_password_request:
+    page:
+        title: 'Mot de passe oublié'
+    title: 'Mot de passe <span>oublié</span>'
+    description: 'Vous avez oublié votre mot de passe ? Ca arrive même au meilleur ! Indiquez l''adresse email associée à votre compte et nous vous enverrons un email avec la marche à suivre pour réinitialiser votre mot de passe.'
+    form:
+        field:
+            email:
+                label: 'Votre adresse email'
+                placeholder: 'Entrez votre email'
+        submit:
+            label: 'Recevoir l''email'
+        message:
+            success: 'Un email de confirmation a été envoyé à l''adresse "%email%"'
+    email:
+        subject: 'Réinitialisation de votre mot de passe'
+        preheader: ''
+        title: 'Réinitialiser votre mot de passe'
+        content: >
+            <p>Bonjour %name%,</p>
+            <p>Afin de procéder à la réinitialisation de votre mot de passe, veuillez cliquez sur le bouton ci-dessous.</p>
+            <p>Ce lien a une validité de 3 heures.</p>
+            <br><a href="%url%" target="_blank" rel="noopener" class="button">Réinitialiser mon mot de passe</a>
+forgot_password_action:
+    page:
+        title: 'Réinitialisation du mot de passe'
+    title: 'Réinitialiser <span>mot de passe</span>'
+    description: 'Vous y êtes presque ! Indiquez votre nouveau mot de passe ci-dessous et vous pourrez accéder à votre compte. Pensez à le noter quelque part cette fois :)'
+    form:
+        field:
+            password:
+                first_options:
+                    label: 'Mot de passe'
+                    help: 'Votre mot de passe doit contenir au moins 10 caractères, dont 1 lettre, 1 chiffre et 1 caractère spécial.'
+                    placeholder: 'Entrez votre mot de passe'
+                second_options:
+                    label: 'Confirmation du mot de passe'
+                    placeholder: 'Entrez votre mot de passe'
+                error:
+                    invalid:
+                        message: 'Les mots de passe saisis ne correspondent pas.'
+        submit:
+            label: 'Valider le mot de passe'
+    message:
+        user_not_found: 'Le token de réinitialisation est invalide ou a expiré.'
+        success: 'Votre mot de passe a été réinitialisé avec succès !'
+registration:
+    page:
+        title: 'Inscription'
+    title: 'Créer un <span>compte</span>'
+    form:
+        field:
+            email:
+                label: 'Adresse email'
+                placeholder: 'Entrez votre email'
+            pseudo:
+                label: 'Pseudonyme'
+                placeholder: 'Entrez votre pseudonyme'
+            image:
+                pre_label: 'Photo de profil'
+                label: 'Uploader une photo'
+            submit:
+                label: 'S''inscrire'
+    email:
+        subject: 'Validation de votre adresse email'
+        preheader: '%name%, finalisez votre inscription à King of Paddock'
+        title: 'Finaliser votre inscription'
+        content: >
+            <p>Bonjour %name%,</p>
+            <p>Afin de procéder à la finalisation de la création de votre compte, veuillez cliquer sur le bouton ci-dessous pour confirmer votre adresse email.</p>
+            <br><a href="%url%" target="_blank" rel="noopener" class="button">Confirmer mon email</a>
+    message:
+        email_unique: 'L''email est déjà utilisé.'
+        pseudo_unique: 'Le pseudo est déjà utilisé.'
+        request_success: 'Un email de confirmation vous a été envoyé.'
+        unknown_error: 'Une erreur s''est produite. Veuillez rééessayer.'
+        error_send_email: 'Le mail de validation n''a pas pu être envoyé.'
+login:
+    page:
+        title: 'Connexion'
+    title: 'Se connecter'
+    form:
+        field:
+            email:
+                label: 'Adresse email'
+                placeholder: 'Entrez votre email'
+            password:
+                label: 'Mot de passe'
+                placeholder: 'Entrez votre mot de passe'
+        submit:
+            label: 'Se connecter'

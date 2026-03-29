@@ -1,0 +1,45 @@
+{
+  "extends": [
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["prettier", "@typescript-eslint"],
+  "globals": {
+    "__DEV__": true
+  },
+  "rules": {
+    "operator-assignment": "off",
+    "explicit-function-return-type": "off",
+    "no-restricted-globals": "off",
+    "import/no-unresolved": "off",
+    "no-use-before-define": "off",
+    "class-methods-use-this": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
+    "no-underscore-dangle": "off",
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "quotes": [2, "single"],
+    "import/extensions": 0,
+    "linebreak-style": [2, "unix"],
+    "semi": [2, "always"],
+    "no-console": [0],
+    "no-loop-func": [0],
+    "new-cap": [0],
+    "no-trailing-spaces": [0],
+    "no-param-reassign": [0],
+    "func-names": [0],
+    "comma-dangle": [0],
+    "no-unused-expressions": [0],
+    "block-scoped-var": [0],
+    "jsx-quotes": ["error", "prefer-double"],
+    "object-curly-spacing": ["error", "always"]
+  }
+}

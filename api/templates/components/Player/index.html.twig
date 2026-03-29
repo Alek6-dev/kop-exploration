@@ -1,0 +1,11 @@
+
+{% set className = className ?? '' %}
+
+<div class="justify-between py-2 border-t flex-v-centering border-white-6">
+    <div class="ml-4 font-bold">{{ name }}</div>
+   {% include 'components/CarInListing/index.html.twig' with {
+        carWidth: '80',
+        car: car,
+        className: className,
+    } %}
+</div>

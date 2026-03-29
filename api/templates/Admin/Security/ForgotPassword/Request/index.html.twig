@@ -1,0 +1,19 @@
+{% extends 'Admin/Security/ForgotPassword/base.html.twig' %}
+
+{% block page_title %}{{ 'forgot_password_request.title' | trans({}, 'admin') }}{% endblock %}
+
+{% block form %}
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_label(form.email) }}
+            <div class="form-widget">
+                {{ form_widget(form.email) }}
+            </div>
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_widget(form.submit) }}
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

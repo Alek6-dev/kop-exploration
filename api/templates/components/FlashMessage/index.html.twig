@@ -1,0 +1,19 @@
+{% set flashMessageClassName = flashMessageClassName ?? '' %}
+{% set messageToDisplay = '' %}
+{% set buttonLabel = '' %}
+
+{% if message is defined %}
+  {% if message is iterable %}
+    {% set messageToDisplay = message.message|trans(message.parameters, 'flashes') %}
+  {% else %}
+    {% set messageToDisplay = message ?? '' %}
+  {% endif %}
+{% endif %}
+
+<div
+  role="banner"
+  class="js-flash-message flash-message {{ type ?? 'alert' }}-background justify-between {{ flashMessageClassName }}"
+>
+  <p class="no-margin text flash-message-text"><b>{{ messageToDisplay ?? '' }}</b></p>
+  <button type="button" class="js-flash-message-button-close flash-message-button-close without-margin" title="{{ buttonLabel ?? '' }}">{% include 'icons/small/cross.html.twig' %}</button>
+</div>

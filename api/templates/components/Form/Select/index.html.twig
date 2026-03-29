@@ -1,0 +1,22 @@
+{% extends 'components/Form/Layout/index.html.twig' %}
+
+{% set required = required ?? true %}
+{% set selectClassName = selectClassName ?? '' %}
+
+{% block field %}
+  <select
+    class="select {{ selectClassName }}"
+    id="{{ id }}"
+    name="{{ name }}"
+    {% if required %}
+      required
+    {% endif %}
+    {% if value %}value={{ value }}{% endif %}>
+    {% for option in choices %}
+      <option
+        value="{{ option.value }}"
+        {% if value == option.value or option.selected is defined %}selected {% endif %}
+      >{{ option.label }}</option>
+    {% endfor %}
+  </select>
+{% endblock %}

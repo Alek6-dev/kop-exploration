@@ -1,0 +1,17 @@
+{% extends 'components/Form/Layout/index.html.twig' %}
+
+{% set required = required ?? true %}
+{% set textareaClassName = textareaClassName ?? '' %}
+{% set placeholder = placeholder ?? '' %}
+
+{% block field %}
+    <textarea id="{{ id }}"
+        name="{{ full_name ?? name ?? '' }}"
+        placeholder="{{ placeholder }}"
+        {% if required %}
+        required
+        {% endif %}
+        {% if value %}value="{{ value }}"{% endif %}
+        class="textarea {{ textareaClassName }}"
+    ></textarea>
+{% endblock %}

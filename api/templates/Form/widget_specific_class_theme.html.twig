@@ -1,0 +1,35 @@
+{% extends 'Form/base_theme.html.twig' %}
+
+{# ensure a class, used by foundation, is added on each widget #}
+
+{% block form_widget_simple %}
+    {% set widgetSpecificClass = 'input' %}
+    {{ parent() }}
+{% endblock form_widget_simple %}
+
+{%- block radio_label -%}
+    {% set widgetSpecificClass = 'radio-item' %}
+    {{ block('form_label') }}
+{%- endblock radio_label -%}
+
+{%- block checkbox_label -%}
+    {% set widgetSpecificClass = 'checkbox' %}
+    {{ block('form_label') }}
+{%- endblock checkbox_label -%}
+
+{%- block checkbox_widget -%}
+    {% set widgetSpecificClass = 'checkbox' %}
+    {{ parent() }}
+{%- endblock checkbox_widget -%}
+
+{%- block textarea_widget -%}
+    {% set widgetSpecificClass = 'input' %}
+    {{ parent() }}
+{%- endblock textarea_widget -%}
+
+{% block attributes -%}
+    {% if widgetSpecificClass is defined %}
+        {% set attr = attr|merge({'class' : attr.class  ?? '' ~ ' ' ~ widgetSpecificClass}, attr) %}
+    {% endif %}
+    {{ parent() }}
+{%- endblock attributes -%}

@@ -1,0 +1,14 @@
+@layer components {
+  .separator {
+    @apply w-full h-[1px] block bg-white-6;
+
+    &-full {
+      width: calc(100% + 40px);
+      @apply -ml-4
+    }
+
+    &-vertical {
+      @apply w-[1px] h-full;
+    }
+  }
+}

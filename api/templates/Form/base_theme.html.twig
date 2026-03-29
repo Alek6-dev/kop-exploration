@@ -1,0 +1,22 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block form_errors %}
+    {% for error in form.vars.errors %}
+        <small class="form-error is-visible">{{ error.message }}</small>
+    {% endfor %}
+{% endblock form_errors  %}
+
+{% block form_row %}
+    <div class="form-item {{ valid ? '' : 'form-item-error' }} {% if containerClassName is defined %}{{ containerClassName }}{% endif %}">
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock form_row  %}
+
+{# with foundation, checkbox label must follow the widget #}
+{% block checkbox_row %}
+    {{ form_errors(form) }}
+    {{ form_widget(form) }}
+    {{ form_label(form) }}
+{% endblock checkbox_row  %}

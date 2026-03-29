@@ -1,0 +1,68 @@
+.login-image {
+    z-index: -1;
+
+    &::before {
+        content: "";
+        background-image: linear-gradient(to bottom, #28292B 0%, rgba(40,41,43,0.00) 100%);
+        @apply absolute left-0 top-0 w-full h-28;
+        z-index: 1;
+    }
+
+    &::after {
+        content: "";
+        background-image: linear-gradient(to top, #28292B 0%, rgba(40,41,43,0.00) 100%);
+        @apply absolute left-0 bottom-0 w-full h-21;
+        z-index: 1;
+    }
+}
+
+.login-image-animated {
+    img {
+        z-index: -1;
+        animation: 16s cubic-bezier(.12,.24,.1,1.01) forwards imageScaling, 1s linear forwards imageOpacity;
+    }
+}
+
+.login-video {
+    z-index: -1;
+    pointer-events: none;
+    touch-action: none;
+}
+
+.login-legals {
+    @apply mt-6;
+    @media screen and (min-height: 790px) {
+        @apply fixed bottom-0 left-0 z-10 w-full p-4;
+    }
+}
+
+.login-logo {
+    animation: 2s linear forwards imageOpacity, 4s linear 2s infinite logoBeat;
+}
+
+@keyframes imageScaling {
+    0% {
+        transform: scale3d(1, 1 , 1)
+    }
+    100% {
+        transform: scale3d(1.2, 1.2, 1.2);
+    }
+}
+
+@keyframes imageOpacity {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes logoBeat {
+    0%, 40%, 60% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}

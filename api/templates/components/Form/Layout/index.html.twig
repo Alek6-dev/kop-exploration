@@ -1,0 +1,25 @@
+{% set label = label ?? null %}
+{% set value = value ?? null %}
+{% set disabled = disabled ?? false %}
+{% set hideError = hideError ?? false %}
+{% set error = error ?? null %}
+{% set hasError = hasError ?? null %}
+{% set required = required ?? true %}
+{% set containerClassName = containerClassName ?? '' %}
+{% set errorClassName = hasError ? 'is-invalid-label' : '' %}
+{% set icon = icon ?? false %}
+
+<div class="form-item {{ containerClassName }} {{ errorClassName }}" for="{{ id }}">
+    {% if label %}
+        {% include 'components/Form/Label/index.html.twig' with {
+            label: label,
+            required: required
+        } %}
+    {% endif %}
+    {% block field %}
+
+    {% endblock %}
+    {% if (required and not hideError) or equalTo is defined %}
+        {% include 'components/Form/Error/index.html.twig' %}
+    {% endif %}
+</div>

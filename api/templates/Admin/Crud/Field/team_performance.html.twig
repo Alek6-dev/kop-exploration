@@ -1,0 +1,42 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+
+<div class="row">
+    <table class="table">
+        <thead>
+        <tr >
+            <td>
+                Ecurie
+            </td>
+            <td>
+                Position
+            </td>
+            <td>
+                Score total
+            </td>
+            <td>
+                Multiplicateur
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for performance in field.value() %}
+            <tr>
+                <td>
+                    {{ performance.team.name }}
+                </td>
+                <td>
+                    {{ performance.position }}
+                </td>
+                <td>
+                    {{ performance.score }}
+                </td>
+                <td>
+                    {{ performance.multiplier / 10 }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

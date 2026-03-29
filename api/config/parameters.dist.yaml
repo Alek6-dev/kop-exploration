@@ -1,0 +1,38 @@
+parameters:
+    request_context.host: 'kop.local'
+    request_context.scheme: 'http'
+    request_context.base_url: '/'
+    request_context.base_path: '%request_context.base_url%'
+    request_context.secure: true
+
+    ###> symfony/mailer ###
+    mailer.sender_name: '%env(MAILER_SENDER_NAME)%'
+    mailer.sender_email: '%env(MAILER_SENDER_EMAIL)%'
+    mailer.recipients: {  }
+    ###< symfony/mailer ###
+
+    ###> doctrine/doctrine-bundle ###
+    database_dbname: '%env(MYSQL_DB)%'
+    database_host: '%env(MYSQL_HOST)%'
+    database_port: '%env(MYSQL_PORT)%'
+    database_user: '%env(MYSQL_USER)%'
+    database_password: '%env(MYSQL_PWD)%'
+    ###< doctrine/doctrine-bundle ###
+
+    ###> ES ###
+    elastic_host: http://service.elasticsearch
+    elastic_port: '%env(ELASTIC_PORT)%'
+    ###< ES ###
+
+    ###> LiipImagine ###
+    # .env configuration
+    # Development configuration
+    imagine.file_system_root: '%kernel.project_dir%/public'
+    imagine.file_system_shared_root: '%kernel.project_dir%/public'
+    # .demo configuration
+    #imagine.file_system_root: '%kernel.project_dir%/public'
+    #imagine.file_system_shared_root: /home/demo/public/kop/shared/public
+    # .staging configuration
+    #imagine.file_system_root: '%kernel.project_dir%/public'
+    #imagine.file_system_shared_root: /var/www/vhosts/xxx/kop/shared/public
+    ###< LiipImagine ###

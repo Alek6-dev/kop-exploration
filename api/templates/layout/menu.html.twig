@@ -1,0 +1,30 @@
+<nav class="fixed bottom-0 bg-black border-t border-[#3D3E40] flex w-full h-14 z-10">
+    <div class="flex justify-end flex-grow h-full">
+        {% include 'components/MenuItem/index.html.twig' with {
+            icon: 'trophy',
+            title: 'Championnats',
+            href: path('app_championships_listing'),
+            className: 'is-active'
+        } %}
+        {% include 'components/MenuItem/index.html.twig' with {
+            icon: 'quiz',
+            title: 'Quiz',
+            href: ''
+        } %}
+    </div>
+    <a href="{{ path('app_homepage') }}" class="flex-initial flex-shrink-0 h-full pl-3 pr-2 flex-centering">
+        <div class="flex-centering rounded-md gradient-white-gray w-[46px] h-[46px]">{% include 'icons/menu/hub.html.twig' %}</div>
+    </a>
+    <div class="flex flex-grow h-full">
+        {% include 'components/MenuItem/index.html.twig' with {
+            icon: 'paddock',
+            title: 'Mon paddock',
+            href: ''
+        } %}
+        {% include 'components/MenuItem/index.html.twig' with {
+            icon: 'podium',
+            title: 'Awards',
+            href: ''
+        } %}
+    </div>
+</nav>

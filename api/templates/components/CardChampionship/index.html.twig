@@ -1,0 +1,14 @@
+ <a href="{{ href }}" class="w-full mb-4 zone card-championship block-animation">
+    <div class="relative p-4">
+        <h2 class="mb-2 h3">{{ name }}</h2>
+        <div class="text-sm font-bold flex-v-centering text-gray">
+            <span class="mr-1">GP</span> {{ nextrace }}/{{ totalrace }}
+            {% if ranl is defined %}
+                {% include 'components/Separator/index.html.twig' with {
+                    className: 'separator-vertical mx-3 h-[12px]'
+                } %}
+                <span class="mr-1">Classement</span> {{ rank }}
+            {%  endif %}
+        </div>
+    </div>
+</a>

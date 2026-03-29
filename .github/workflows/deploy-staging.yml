@@ -1,0 +1,188 @@
+name: Deploy Staging
+
+on:
+    workflow_dispatch:
+        inputs:
+            deploy_target:
+                description: 'What to deploy'
+                required: true
+                type: choice
+                options:
+                    - both
+                    - api
+                    - app
+            ref:
+                description: 'Tag, branch or SHA to deploy (leave empty for current branch)'
+                required: false
+                type: string
+
+concurrency:
+    group: deploy-staging
+    cancel-in-progress: false
+
+jobs:
+    # ── CI gates (reusable workflows) ───────────────────────────────────────
+    api-ci:
+        name: API CI
+        if: inputs.deploy_target == 'both' || inputs.deploy_target == 'api'
+        uses: ./.github/workflows/api-ci.yml
+
+    app-ci:
+        name: App CI
+        if: inputs.deploy_target == 'both' || inputs.deploy_target == 'app'
+        uses: ./.github/workflows/app-ci.yml
+
+    # ── Deploy API ──────────────────────────────────────────────────────────
+    # Uses Deployer via deployphp/action to deploy the Symfony API
+    # deploy.php config lives in api/ (portable if repo is split)
+    deploy-api:
+        name: Deploy API
+        needs: api-ci
+        if: inputs.deploy_target == 'both' || inputs.deploy_target == 'api'
+        runs-on: ubuntu-latest
+        environment: staging
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+                with:
+                    ref: ${{ inputs.ref || github.ref }}
+
+            -   name: Download API assets
+                uses: actions/download-artifact@v4
+                with:
+                    name: api-assets
+                    path: api/public/assets/
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.3'
+                    tools: composer:v2
+
+            -   name: Install Deployer
+                run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
+                working-directory: api
+
+            -   name: Setup SSH
+                run: |
+                    mkdir -p ~/.ssh
+                    echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                    chmod 600 ~/.ssh/id_rsa
+                    ssh-keyscan -H ${{ vars.SSH_HOST }} >> ~/.ssh/known_hosts
+
+            -   name: Deploy with Deployer
+                run: vendor/bin/dep deploy staging --tag=${{ inputs.ref || github.ref_name }} -vvv
+                working-directory: api
+
+    # ── Deploy App ──────────────────────────────────────────────────────────
+    # Script lives in app/.github/scripts/ (portable if repo is split)
+    deploy-app:
+        name: Deploy App
+        needs: app-ci
+        if: inputs.deploy_target == 'both' || inputs.deploy_target == 'app'
+        runs-on: ubuntu-latest
+        environment: staging
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+                with:
+                    ref: ${{ inputs.ref || github.ref }}
+
+            -   name: Setup SSH
+                run: |
+                    mkdir -p ~/.ssh
+                    echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+                    chmod 600 ~/.ssh/deploy_key
+                    ssh-keyscan -H ${{ vars.SSH_HOST }} >> ~/.ssh/known_hosts
+                    cat >> ~/.ssh/config << 'SSHEOF'
+                    Host staging
+                      HostName ${{ vars.SSH_HOST }}
+                      User ${{ vars.SSH_USER }}
+                      IdentityFile ~/.ssh/deploy_key
+                    SSHEOF
+                    sed -i 's/^          //' ~/.ssh/config
+
+            -   name: Deploy App to staging
+                run: bash app/.github/scripts/deploy-staging.sh
+                env:
+                    SSH_USER: ${{ vars.SSH_USER }}
+                    SSH_HOST: ${{ vars.SSH_HOST }}
+                    APP_PATH: /home/${{ vars.SSH_USER }}/kop-app
+                    DEPLOY_REF: ${{ inputs.ref || github.ref_name }}
+
+    # ── Discord Notifications ─────────────────────────────────────────────
+    notify-success:
+        name: Notify Success
+        if: always() && !cancelled() && !contains(needs.*.result, 'failure')
+        needs: [deploy-api, deploy-app]
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Send Discord success notification
+                env:
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                run: |
+                    DEPLOY_REF="${{ inputs.ref || github.ref_name }}"
+                    TARGET="${{ inputs.deploy_target }}"
+                    ACTOR="${{ github.actor }}"
+                    RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+                    URLS=""
+                    if [[ "$TARGET" == "both" || "$TARGET" == "api" ]]; then
+                      URLS="${URLS}> **API**: https://staging-api.king-of-paddock.fr\n> **Admin**: https://staging-api.king-of-paddock.fr/admin\n"
+                    fi
+                    if [[ "$TARGET" == "both" || "$TARGET" == "app" ]]; then
+                      URLS="${URLS}> **App**: https://staging.king-of-paddock.fr\n"
+                    fi
+
+                    curl -s -H "Content-Type: application/json" \
+                      -d "{
+                        \"embeds\": [{
+                          \"title\": \"Deployment Staging — Success\",
+                          \"color\": 3066993,
+                          \"fields\": [
+                            { \"name\": \"Tag / Ref\", \"value\": \"\`${DEPLOY_REF}\`\", \"inline\": true },
+                            { \"name\": \"Target\", \"value\": \"\`${TARGET}\`\", \"inline\": true },
+                            { \"name\": \"Triggered by\", \"value\": \"${ACTOR}\", \"inline\": true }
+                          ],
+                          \"description\": \"${URLS}\n[Voir le workflow](${RUN_URL})\",
+                          \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                        }]
+                      }" "$DISCORD_WEBHOOK_URL"
+
+    notify-failure:
+        name: Notify Failure
+        if: always() && contains(needs.*.result, 'failure')
+        needs: [deploy-api, deploy-app]
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Send Discord failure notification
+                env:
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                run: |
+                    DEPLOY_REF="${{ inputs.ref || github.ref_name }}"
+                    TARGET="${{ inputs.deploy_target }}"
+                    ACTOR="${{ github.actor }}"
+                    RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+                    FAILED_JOBS=""
+                    if [[ "${{ needs.deploy-api.result }}" == "failure" ]]; then
+                      FAILED_JOBS="${FAILED_JOBS}> - Deploy API\n"
+                    fi
+                    if [[ "${{ needs.deploy-app.result }}" == "failure" ]]; then
+                      FAILED_JOBS="${FAILED_JOBS}> - Deploy App\n"
+                    fi
+
+                    curl -s -H "Content-Type: application/json" \
+                      -d "{
+                        \"embeds\": [{
+                          \"title\": \"Deployment Staging — Failed\",
+                          \"color\": 15158332,
+                          \"fields\": [
+                            { \"name\": \"Tag / Ref\", \"value\": \"\`${DEPLOY_REF}\`\", \"inline\": true },
+                            { \"name\": \"Target\", \"value\": \"\`${TARGET}\`\", \"inline\": true },
+                            { \"name\": \"Triggered by\", \"value\": \"${ACTOR}\", \"inline\": true }
+                          ],
+                          \"description\": \"**Jobs en échec :**\n${FAILED_JOBS}\n[Voir les logs du workflow](${RUN_URL})\",
+                          \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
+                        }]
+                      }" "$DISCORD_WEBHOOK_URL"

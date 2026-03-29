@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/*)",
+      "Bash(git push --force:*)",
+      "Bash(chmod 777:*)",
+      "Bash(chmod -R 777:*)",
+      "Bash(sudo rm:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd api && ./vendor/bin/php-cs-fixer fix --dry-run --diff --quiet 2>/dev/null; exit 0",
+            "timeout": 30,
+            "statusMessage": "Checking PHP code style..."
+          },
+          {
+            "type": "command",
+            "command": "pnpm --filter @kop/app lint --quiet 2>/dev/null; exit 0",
+            "timeout": 30,
+            "statusMessage": "Checking ESLint..."
+          }
+        ]
+      }
+    ]
+  }
+}

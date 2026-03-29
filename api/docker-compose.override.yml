@@ -1,0 +1,28 @@
+version: '2'
+services:
+    mysql:
+        ports:
+            - $MYSQL_PORT:3306
+    nginx:
+        ports:
+            - 80:80
+            - 443:443
+    mailcatcher:
+        ports:
+            - 1025:1025
+            - 1080:1080
+    elasticsearch:
+        ports:
+            - $ELASTIC_PORT:9200
+        environment:
+            - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    nodejs:
+        ports:
+            - 3000:3000
+    php:
+        environment:
+            LOCAL_USER_ID: $USER_ID
+            APP_ENVIRONNEMENT_DEV: 1
+            APP_ENVIRONNEMENT_TEST: 1
+            XDEBUG_CONFIG: client_host=$XDEBUG_HOST
+            PHP_IDE_CONFIG: serverName=$SERVER_HOST

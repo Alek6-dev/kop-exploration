@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Portefeuille de jetons KOP - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="h1"><div class="h1-subtitle">Portefeuille</div> <span>jetons KOP</span></h1>
+    </div>
+
+    <div class="container mt-6">
+        <div class="w-full zone block-animation">
+            <div class="relative flex items-center w-full p-4">
+                <div class="relative w-8 h-8 svg-full">{% include 'icons/money/kop.html.twig' %}</div>
+                <div class="ml-3">
+                    <p class="h4 mb-[2px]">Jetons disponibles</p>
+                    <p class="h3 text-primary">200</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full mt-4 zone block-animation">
+            <div class="relative w-full p-4">
+                <h2 class="mb-2 h3">A quoi servent le jetons KOP ?</h2>
+                <p class="text-gray">Les jetons KOP vous permettent d’acquérir des cosmétiques (monoplace, casque, combinaison...). Vous pouvez en gagner en recompense d’un championnat ou en invitant un nouveau joueur à rejoindre un championnat (uniquement valable pour le tout premier championnat rejoint par ce joueur sur l'application).</p>
+            </div>
+        </div>
+
+        <div class="w-full mt-4 zone block-animation">
+            <div class="relative w-full p-4">
+                <h2 class="mb-2 h3">Acheter des jetons KOP</h2>
+                <p class="font-bold">Sélectionnez un pack de jetons (économisez grâce à nos tarifs dégressifs)</p>
+
+                {% set packs = [
+                    {
+                        name: '100 jetons',
+                        discount: '',
+                        price: '0,99 €',
+                        value: 100
+                    },
+                    {
+                        name: '250 jetons',
+                        discount: 'économisez 5%',
+                        price: '2,35 €',
+                        value: 250
+                    },
+                    {
+                        name: '500 jetons',
+                        discount: 'économisez 10%',
+                        price: '4,49 €',
+                        value: 500
+                    },
+                    {
+                        name: '1000 jetons',
+                        discount: 'économisez 15%',
+                        price: '8,49 €',
+                        value: 1000
+                    },
+                ] %}
+
+                <form class="w-full">
+                    <div class="form-item custom-radio custom-radio-complex">
+                        <div class="flex flex-col mt-4">
+                            {% for pack in packs %}
+                                <label>
+                                    <input type="radio" name="kop-amount" value="{{ pack.value }}" />
+                                    <div>
+                                        {% include 'icons/money/kop.html.twig' %}
+                                        <div class="pl-2">
+                                            {{ pack.name }}
+                                            {% if pack.discount != '' %}<div class="text-sm font-normal">{{ pack.discount }}</div>{% endif %}
+                                        </div>
+                                        <div class="ml-auto"><b>{{ pack.price }}</b></div>
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% include 'components/Separator/index.html.twig' with {
+                        className: 'my-4 separator-full'
+                    } %}
+
+                    {% include 'components/Button/index.html.twig' with {
+                        label: 'Accéder au paiement',
+                        href: '',
+                        className: 'btn-primary'
+                    } %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

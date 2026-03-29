@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTDXHTML1.0Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>{{ 'title' | trans({}, 'email') }}</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                -moz-box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+                min-width: 100%;
+                margin: 0;
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+                font-size: 14px;
+                color: #28292B;
+            }
+
+            .preheader {
+                display:none !important;
+                visibility:hidden;
+                mso-hide:all;
+                font-size:1px;
+                line-height:1px;
+                max-height:0px;
+                max-width:0px;
+                opacity:0;
+                overflow:hidden;
+            }
+
+            table {
+                border: 1px solid #DDD;
+                max-width: 600px;
+                width: 100%;
+                margin: 20px auto 0;
+                border-spacing: 0;
+                border-collapse: collapse;
+            }
+
+            table td {
+                border-collapse: collapse;
+                padding: 0;
+                margin: 0;
+            }
+
+            .padding-20 {
+                padding: 20px;
+            }
+
+            .padding-30 {
+                padding: 30px;
+            }
+
+            .padding-6 {
+                padding: 6%;
+            }
+
+            .footer {
+                width: 600px;
+                margin: 30px auto;
+            }
+
+            .footer-text {
+                font-size: 11px;
+                color: #666;
+            }
+
+            p {
+                margin-top: 0;
+                line-height: 1.6;
+            }
+
+            h2 {
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+
+            .button {
+                display: inline-block;
+                padding: 15px;
+                background: #F1C445;
+                color: #28292B !important;
+                font-weight: bold;
+                text-decoration: none;
+                border-radius: 10px;
+            }
+        </style>
+    </head>
+    <body>
+    <span class="preheader">{% block preheader %}{% endblock %}</span>
+    <table class="body">
+        {% block header %}
+            {% include 'layout/email/includes/_header.partials.twig' %}
+        {% endblock %}
+        <tr>
+            <td class="padding-6">
+                <h2>{% block title %}{% endblock %}</h2>
+                {% block body %}{% endblock %}
+            </td>
+        </tr>
+    </table>
+
+    {% include 'layout/email/includes/_footer.partials.twig' %}
+
+    <!-- prevent Gmail on iOS font size manipulation --><div style="display:none; white-space:nowrap; font:15px courier; line-height:0;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+    </body>
+</html>

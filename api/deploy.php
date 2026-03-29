@@ -1,0 +1,66 @@
+<?php
+
+namespace Deployer;
+
+import('recipe/symfony.php');
+import(__DIR__ . '/hosts.yml');
+
+// Git
+set('repository', 'git@github.com:King-Of-Paddock/kop-app.git');
+set('sub_directory', 'api');
+set('branch', 'main');
+set('default_stage', 'staging');
+
+// SSH
+set('ssh_type', 'native');
+set('ssh_multiplexing', false);
+
+// Composer: PHAR installed on the server
+set('bin/composer', '{{bin/php}} {{release_path}}/composer.phar');
+set('composer_options', function () {
+    $options = '--no-scripts --optimize-autoloader --no-interaction --prefer-dist';
+    if (get('stage') === 'prod') {
+        $options = '--no-dev ' . $options;
+    }
+    return $options;
+});
+
+// Shared files & dirs
+add('shared_files', ['.env.local', 'config/parameters.yaml']);
+set('shared_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
+set('writable_dirs', ['public/images', 'public/media', 'public/uploads', 'config/jwt', 'var']);
+
+// Task: Install Composer PHAR
+task('deploy:install_composer', function () {
+    run("cd {{release_path}} && curl -sS https://getcomposer.org/installer | {{bin/php}}");
+})->desc('downloading composer');
+
+// Task: Upload pre-built assets from CI
+task('upload:assets', function () {
+    upload('public/assets/', '{{release_path}}/public/assets/');
+})->desc('uploading assets');
+
+// Task: Symfony assets:install
+task('deploy:assets:install', function () {
+    run('cd {{release_path}} && {{bin/console}} assets:install');
+});
+
+// Task: Fix var/ permissions (var is shared, so only one path to chmod)
+task('chmod:var', function () {
+    run("chmod -R 777 {{deploy_path}}/shared/var");
+});
+
+// Task: Warmup cache (creates Doctrine proxies, etc.)
+task('deploy:cache:warmup', function () {
+    run("cd {{release_path}} && {{bin/console}} cache:warmup");
+});
+
+// Hooks
+before('deploy:vendors', 'deploy:install_composer');
+before('deploy:symlink', 'database:migrate');
+before('deploy:symlink', 'upload:assets');
+after('upload:assets', 'deploy:assets:install');
+after('deploy:symlink', 'deploy:cache:warmup');
+after('deploy:cache:warmup', 'chmod:var');
+
+after('deploy:failed', 'deploy:unlock');

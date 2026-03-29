@@ -1,0 +1,35 @@
+.equality-1 {
+    .gradient-gold {
+        @apply h-15;
+    }
+    .gradient-silver {
+        @apply h-12;
+    }
+    .gradient-bronze {
+        @apply h-10;
+    }
+}
+
+.equality-2 {
+    .gradient-gold {
+        @apply h-18;
+    }
+    .gradient-silver {
+        @apply h-15;
+    }
+    .gradient-bronze {
+        @apply h-13;
+    }
+}
+
+.equality-3 {
+    .gradient-gold {
+        @apply h-21;
+    }
+    .gradient-silver {
+        @apply h-18;
+    }
+    .gradient-bronze {
+        @apply h-16;
+    }
+}

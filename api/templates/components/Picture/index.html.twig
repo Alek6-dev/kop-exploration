@@ -1,0 +1,41 @@
+{#
+ # Picture module
+ #
+ # Usage :
+ #
+ #  {% include 'components/Picture/index.html.twig' with {
+ #      imageClassName: 'custom-class',
+ #      alt: 'Description image',
+ #      defaultSize: asset('/relative/path/to/image.jpg'),
+ #      sizes: [
+ #          {
+ #              media_query: 'min-width: 1024px',
+ #              src1x: asset('image-300x300-jpg'),
+ #              src2x: asset('image-600x600-jpg'),
+ #              src1x_webp: asset('image-300x300-webp'),
+ #              src2x_webp: asset('image-600x600-webp')
+ #          },
+ #          ...
+ #      ]
+ #  } %}
+ #
+ # picture_class props is optional.
+ #}
+
+{% set pictureClassName = pictureClassName ?? '' %}
+{% set imageClassName = imageClassName ?? '' %}
+{% set width = width ?? null %}
+{% set alt = alt ?? 'Description image' %}
+{% set type = type ?? 'image/jpeg' %}
+
+<picture class="{{ pictureClassName }}">
+    {% if sizes is defined %}
+    {% for size in sizes %}
+        {% if size.src1x_webp or size.src2x_webp %}
+        <source srcset="{% if size.src1x_webp %}{{ size.src1x_webp }} 1x{% endif %}{% if size.src1x_webp and size.src2x_webp %},{% endif %} {% if size.src2x_webp %}{{ size.src2x_webp }} 2x{% endif %}" media="({{ size.media_query }})" type="image/webp">
+        {% endif %}
+        <source srcset="{% if size.src1x %}{{ size.src1x }} 1x{% endif %}{% if size.src1x and size.src2x %},{% endif %} {% if size.src2x %}{{ size.src2x }} 2x{% endif %}" media="({{ size.media_query }})" type="{{ type }}">
+    {% endfor %}
+    {% endif %}
+    <img src="{{ defaultSize }}" class="{{ imageClassName }}" {% if width %}width="{{ width }}"{% endif %} alt="{{ alt }}" />
+</picture>

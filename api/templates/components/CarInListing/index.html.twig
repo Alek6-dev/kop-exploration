@@ -1,0 +1,6 @@
+<div class="rounded-l-full relative flex-centering car-in-listing {{ className }}">
+    <picture class="block w-full translate-x-4">
+        <source srcset="{{ asset('assets/images/f1/' ~ car ~ '.png') }} 1x, {{ asset('assets/images/f1/' ~ car ~ '@2x.png') }} 2x">
+        <img src="{{ asset('assets/images/f1/' ~ car ~ '.png') }}" class="relative block max-w-none" width="{{ carWidth }}">
+    </picture>
+</div>

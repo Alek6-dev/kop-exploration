@@ -1,0 +1,38 @@
+@layer base {
+    body {
+      @apply bg-black text-base;
+    }
+
+    body.user-logged {
+      @apply pb-18;
+    }
+
+    picture {
+      @apply block relative;
+    }
+
+    section {
+      @apply relative;
+    }
+
+    html, body {
+      @apply scroll-smooth text-white;
+      -webkit-font-smoothing : antialiased;
+      -moz-osx-font-smoothing : grayscale;
+    }
+
+    ul li {
+      @apply pl-[18px] mb-2 relative;
+      &::before {
+        content: "";
+        @apply rounded-full w-1 h-1 bg-primary block shrink-0 absolute left-0 top-[8px];
+      }
+      ul {
+        @apply mt-2;
+
+        li::before {
+          @apply bg-transparent border border-primary;
+        }
+      }
+    }
+  }

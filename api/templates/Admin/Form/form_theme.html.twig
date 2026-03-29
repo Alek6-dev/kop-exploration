@@ -1,0 +1,7 @@
+{% extends 'bootstrap_5_layout.html.twig' %}
+
+{% block form_errors %}
+    {% for error in form.vars.errors %}
+        <small class="invalid-feedback d-inline">{{ error.message | trans(error.messageParameters, translation_domain) }}</small>
+    {% endfor %}
+{% endblock form_errors  %}

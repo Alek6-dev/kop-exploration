@@ -1,0 +1,28 @@
+/* Global styles */
+
+@import '_font-face';
+@import '_typography';
+@import '_utilities-custom';
+@import '_base-custom';
+@import '_components-custom';
+@import '_form';
+@import '_animation';
+
+/* Custom components */
+
+@import 'components/_menu-item';
+@import 'components/_paddock';
+@import 'components/_podium';
+@import 'components/_rank';
+@import 'components/_stats';
+@import 'components/_strategy-card';
+@import 'components/_table';
+
+/* Pages specific */
+
+@import 'pages/_login-register';
+@import 'pages/_hub';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,3 @@
+error:
+    not_found:
+        label: 'Le pilote %full_name% n''a pas été trouvé.'

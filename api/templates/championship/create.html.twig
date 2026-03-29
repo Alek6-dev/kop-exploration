@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'create.page.title' | trans({}, 'championship')}} - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="h1">{{ 'create.title' | trans({}, 'championship') | raw}}</h1>
+    </div>
+
+    <div class="container mt-6">
+       <div class="w-full zone block-animation">
+            <div class="relative flex w-full p-4">
+                {{ form_start(form) }}
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.numberOfRaces) }}
+                    {{ form_row(form.numberOfPlayers) }}
+                    {{ form_row(form.jokerEnabled) }}
+                    {% include 'components/Separator/index.html.twig' with {
+                        className: 'my-4 separator-full'
+                    } %}
+                    {{ form_row(form.submit, { 'attr' : {'class': 'btn btn-primary'}}) }}
+                {{ form_end(form) }}
+                <form class="w-full">
+                    <div class="form-item">
+                        <label for="name" class="label">Nom du championnat <span>*</span></label>
+                        <input type="text" id="name" name="name" placeholder="Entrez un nom..." class="input" />
+                    </div>
+
+                    <div class="form-item custom-radio">
+                        <div class="label">Nombre de Grand-Prix</div>
+                            <div class="flex gap-2">
+                            <label>
+                                <input type="radio" name="gp-amount" value="4" />
+                                <div>4</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="gp-amount" value="4" />
+                                <div>5</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="gp-amount" value="4" />
+                                <div>6</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="gp-amount" value="4" />
+                                <div>7</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="gp-amount" value="4" />
+                                <div>8</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="gp-amount" value="4" />
+                                <div>9</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="gp-amount" value="4" />
+                                <div>10</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-item custom-radio">
+                        <div class="label">Nombre de joueurs</div>
+                            <div class="flex gap-2">
+                            <label>
+                                <input type="radio" name="players-amount" value="4" />
+                                <div>4</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="players-amount" value="4" />
+                                <div>6</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="players-amount" value="4" />
+                                <div>8</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="players-amount" value="4" />
+                                <div>10</div>
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div class="form-item custom-radio">
+                        <div class="label">Jouer avec les jokers</div>
+                            <div class="flex gap-2">
+                            <label>
+                                <input type="radio" name="jokers" value="4" />
+                                <div>Oui</div>
+                            </label>
+                            <label>
+                                <input type="radio" name="jokers" value="4" />
+                                <div>Non</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    {% include 'components/Separator/index.html.twig' with {
+                        className: 'my-4 separator-full'
+                    } %}
+
+                    {% include 'components/Button/index.html.twig' with {
+                        label: 'Créer le championnat',
+                        href: path('app_championship_create'),
+                        className: 'btn-primary'
+                    } %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

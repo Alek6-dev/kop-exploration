@@ -1,0 +1,14 @@
+{% set className = className ?? '' %}
+{% set title = title ?? label %}
+{% set disabled = disabled ?? false %}
+
+<{% if href is defined %}a href="{{ href }}"
+{% else %}button {% if type is defined %}type="{{ type }}"{% endif %}{% endif %}
+class="btn {{ className }}"
+title="{{ title }}"
+{% if disabled %}disabled{% endif %}
+{% if id is defined %}id="{{id }}"{% endif %}
+{% if specificAttr is defined %}{{ specificAttr|raw }}{% endif %}
+>
+    {{ label }}
+</{% if href is defined %}a{% else %}button{% endif %}>
