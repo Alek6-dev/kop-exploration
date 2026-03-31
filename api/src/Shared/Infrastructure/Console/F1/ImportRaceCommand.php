@@ -8,7 +8,9 @@ use App\Driver\Domain\Model\DriverInterface;
 use App\Driver\Domain\Repository\DriverRepositoryInterface;
 use App\Performance\Application\Command\SavePerformance\SaveDriverPerformanceCommand;
 use App\Performance\Application\Command\SavePerformance\SaveTeamPerformanceCommand;
+use App\Performance\Domain\Enum\TeamMultiplierEnum;
 use App\Performance\Domain\Model\DriverPerformanceInterface;
+use App\Performance\Domain\Model\TeamPerformanceInterface;
 use App\Race\Domain\Repository\RaceRepositoryInterface;
 use App\Result\Domain\Repository\ResultRepositoryInterface;
 use App\Result\Infrastructure\Doctrine\Entity\Result;
@@ -223,6 +225,9 @@ final class ImportRaceCommand extends Command
         $io->section('Team performances');
         $teamDrivers = $this->groupDriversByTeam($driverList, $driverByNumber, $driverPerformances);
 
+        /** @var array<string, TeamPerformanceInterface> $allTeamPerformances */
+        $allTeamPerformances = [];
+
         foreach ($teamDrivers as $teamName => $teamData) {
             $team = $teamData['team'];
             $performances = $teamData['performances'];
@@ -232,6 +237,7 @@ final class ImportRaceCommand extends Command
                 continue;
             }
 
+            /** @var TeamPerformanceInterface $tp */
             $tp = $this->commandBus->dispatch(new SaveTeamPerformanceCommand(
                 season: $season,
                 race: $race,
@@ -241,8 +247,28 @@ final class ImportRaceCommand extends Command
                 result: $result,
             ));
 
+            $allTeamPerformances[$teamName] = $tp;
+        }
+
+        // Sort by score ASC — score = sum(qualPos + racePos) for both drivers,
+        // so lower = better team (positions are smaller numbers when finishing higher)
+        uasort($allTeamPerformances, static fn (TeamPerformanceInterface $a, TeamPerformanceInterface $b): int =>
+            $a->getScore() <=> $b->getScore()
+        );
+
+        // Assign position rank and multiplier (P_1=20→2.0 for best team, P_10=11→1.1, P_DEFAULT=10→1.0)
+        $rank = 1;
+        foreach ($allTeamPerformances as $teamName => $tp) {
+            $multiplierValue = TeamMultiplierEnum::getPointsFromPosition((string) $rank)->value;
+            $tp->setPosition($rank)->setMultiplier($multiplierValue);
             $this->em->persist($tp);
-            $io->text(sprintf('  Team "%s" saved.', $teamName));
+            $io->text(sprintf(
+                '  Team "%s" — rank %d / multiplier ×%.1f',
+                $teamName,
+                $rank,
+                $multiplierValue / 10,
+            ));
+            ++$rank;
         }
 
         $this->em->flush();
