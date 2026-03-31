@@ -394,9 +394,116 @@ Pattern existant : chaque domaine dans `api/src/{Domain}/`
 ### Remplacement de pilote — NE PAS TOUCHER
 Géré manuellement en admin. Trop complexe et source de bugs critiques (cas vécu en 2025 : pilote remplacé définitivement → bugs dans championnats actifs, enchères, résultats historiques). Chantier séparé à planifier.
 
-### Ce qui a déjà été fait dans cette repo (commits de la session du 31/03/2026)
+### Ce qui a déjà été fait dans cette repo
 - Fix entrypoint Docker PHP (exit code 9 + permissions log) → `api/config/docker/images/php-fpm/entrypoint.sh`
 - Responsive desktop : conteneur max-width 480px centré → `app/app/layout.tsx`, `app/styles/_base-custom.css`, `app/app/_components/Menu.tsx`
 - Composant `PasswordInput` avec toggle œil → `app/components/custom/password-input.tsx` + 4 formulaires mis à jour
 - Fix page inscription : paramètre `user_confirmation_by_admin` manquant → optional chaining + insertion en BDD
 - Comptes de test créés directement en BDD (voir section "Comptes de test")
+- Import F1 Live Timing : `kop:f1:sync-season` + `kop:f1:import-race` → `api/src/Shared/Infrastructure/Console/F1/`
+
+---
+
+## PROCHAINE SESSION — Points à traiter dans l'ordre
+
+### 1. PRIORITÉ ABSOLUE — Corriger sync-season pour importer les 24 GP du calendrier
+
+**Problème actuel** : `kop:f1:sync-season 2026` ne trouve que 3 GP car le filtre cherche un session path finissant par `_Race/`. Or F1 Live Timing ne publie les paths que pour les meetings proches/passés. Les GP futurs ont `Type: "Race"` dans leurs sessions mais pas encore de `Path`.
+
+**Fix à faire** :
+- Avant de coder, vérifier d'abord ce que contient l'Index.json pour un GP futur (ex : GP #4 Bahreïn) : est-ce qu'il a des sessions avec `Type: "Race"` sans `Path` ? Commande : `curl -s -H "User-Agent: Mozilla/5.0" "https://livetiming.formula1.com/static/2026/Index.json" | python3 -c "import sys,json; d=json.loads(sys.stdin.buffer.read().decode('utf-8-sig')); [print(json.dumps(m,indent=2)) for m in d['Meetings'] if m.get('Number',0)==4]"`
+- Changer le filtre dans `SyncSeasonCommand::execute()` : au lieu de `findSessionByType($m['Sessions'], 'race')` qui cherche un path, utiliser une détection par `Type` de session : chercher une session avec `Type === "Race"` (insensible à la casse) dans la liste `Sessions` du meeting.
+- Pour les SeasonRace sans path : créer quand même Race + SeasonRace avec les dates (StartDate + GmtOffset → UTC). Laps = 0 par défaut.
+- Pour la partie drivers/teams : ne syncer que si un path de session Race existe (pilotes connus seulement quand le GP est imminent/passé). Séparer clairement les deux boucles dans syncMeeting().
+- Filtrer les meetings "Pre-Season Testing" : vérifier que le meeting n'a pas "Testing" dans son `Name` ou `OfficialName`.
+
+**Tester** : après fix, `kop:f1:sync-season 2026` doit trouver ~24 GP et créer toutes les SeasonRaces avec les bonnes dates.
+
+---
+
+### 2. Archivage des entités (Race, Season, Team, Driver)
+
+**Problème actuel** : impossible de supprimer une Race dans EasyAdmin car la table `result` a une FK `race_id` sans CASCADE. Erreur : `ForeignKeyConstraintViolationException`.
+
+**Décision prise** : système d'**archivage** (pas suppression cascade), plus safe car les données restent en base.
+
+**Plan d'implémentation** :
+1. Créer un trait `ArchivableTrait` dans `api/src/Shared/Infrastructure/Doctrine/Entity/Traits/` avec un champ `#[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])] private bool $isArchived = false;` + getter/setter.
+2. Ajouter ce trait sur les entités : `Race`, `Season`, `Team`, `Driver` (les 4 entités concernées).
+3. Générer une migration Doctrine : `make api-console ARGS="doctrine:migrations:diff"` puis `make api-console ARGS="doctrine:migrations:migrate"`.
+4. Modifier les CRUD controllers EasyAdmin (à trouver dans `api/src/Admin/`) pour :
+   - Remplacer l'action "Delete" par une action custom "Archiver" qui setIsArchived(true) + flush
+   - Filtrer les listes avec `->andWhere('entity.isArchived = false')` dans les query builders
+5. Dans les repositories, ajouter un filtre `withNotArchived()` pour les requêtes métier.
+
+**Où sont les CRUD controllers EasyAdmin** : `api/src/Admin/` ou `api/src/*/Infrastructure/ApiPlatform/` — à vérifier au démarrage de session avec `find api/src -name "*CrudController*"`.
+
+---
+
+### 3. Recalcul GPO (Gains de Positions) — logique correcte
+
+**Définition GPO** (confirmée par le propriétaire) :
+- Variation positive du classement d'un pilote **tour après tour** pendant le GP
+- Exemple : P12 → P6 au tour suivant = +6 GPO ; P6 → P12 = +0 (pas de négatif)
+- Un pilote P1 du début à la fin sans jamais être passé : 0 GPO
+- C'est cumulatif : on additionne tous les gains positifs tour par tour
+- Jamais négatif
+
+**Gestion DNF** : un pilote qui abandonne conserve les GPO accumulés jusqu'à son dernier tour en course.
+
+**Gestion pénalités post-course** : utiliser UNIQUEMENT la position officielle finale de `FinalClassification.json` (ou TimingData.json) pour le dernier "état" du pilote. Exemple : pilote X finit P3 en piste mais reçoit 5s → classé P4 officiellement ; pilote Y (P4 en piste) remonte à P3 officiellement → Y gagne 1 GPO sur ce passage de P4→P3.
+
+**Algorithme correct à implémenter dans `ImportRaceCommand`** :
+```
+Données : LapSeries[driver] = [gridPos, lap1Pos, lap2Pos, ...] (index 0 = grille)
+          FinalClassification[driver].Position = position officielle finale
+
+Pour chaque driver :
+  gpo = 0
+  prev_pos = LapSeries[driver][0]  // grille (lap 0)
+  
+  Pour lap = 1 à N (laps en course du driver) :
+    Si LapSeries[driver][lap] n'est pas vide/null :
+      curr_pos = LapSeries[driver][lap]
+      Si c'est le DERNIER lap connu du driver :
+        curr_pos = FinalClassification[driver].Position  // position officielle
+      gain = prev_pos - curr_pos
+      Si gain > 0 : gpo += gain
+      prev_pos = curr_pos
+    Sinon : break (DNF, on arrête)
+  
+  DriverPerformance.positionGain = gpo
+```
+
+**Note** : la position officielle finale (FinalClassification) remplace la position du dernier lap de LapSeries pour gérer les pénalités. Pour les DNF, leur dernier lap LapSeries est la référence finale.
+
+**Fichiers à modifier** : `ImportRaceCommand::importLapByLap()` doit retourner non plus juste le nombre de tours mais aussi les GPO par pilote. La méthode de calcul GPO doit être séparée.
+
+---
+
+### 4. Multiplicateur équipe — retrouver la logique existante
+
+**Contexte** : le multiplicateur (`TeamPerformance.multiplier`) va de 2.0 à 1.0 par steps de 0.1, basé sur les résultats combinés qualifs + course des deux pilotes de l'équipe. L'agence avait un système d'import CSV qui calculait ce multiplicateur automatiquement.
+
+**À faire au démarrage de session** : lire `TeamMultiplierEnum` + chercher dans le code existant comment ce multiplicateur était calculé :
+```bash
+grep -r "multiplier\|TeamMultiplier" api/src --include="*.php" -l
+cat api/src/Performance/Domain/Enum/TeamMultiplierEnum.php
+grep -r "setMultiplier" api/src --include="*.php" -n
+```
+
+**Hypothèse** : le multiplicateur est calculé à partir du score combiné des deux pilotes (qualif + course) comparé au meilleur score de l'équipe de tête, puis mappé sur l'enum. À confirmer en lisant le code existant.
+
+---
+
+### État de la feature F1 import après la session du 31/03/2026
+
+**Ce qui fonctionne** :
+- `kop:f1:sync-season 2026` : crée saison, races, teams (avec couleur), drivers, season_teams, season_races avec bonnes dates UTC — ✅
+- `kop:f1:import-race 2026 {N}` : crée Result, ResultLaps (qual + sprint + course tour par tour), DriverPerformance, TeamPerformance — ✅ (structure OK)
+- Testé sur GP#1 Australie et GP#2 Chine (sprint weekend) — ✅
+
+**Ce qui est incorrect et à corriger** :
+- GPO calculé comme `max(0, qualPos - racePos)` → **FAUX**, voir §3 ci-dessus
+- Multiplicateur équipe = 1 pour tous → **FAUX**, voir §4 ci-dessus
+- sync-season ne trouve que les GPs déjà disputés → voir §1 ci-dessus
