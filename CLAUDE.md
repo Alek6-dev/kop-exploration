@@ -481,18 +481,13 @@ Pour chaque driver :
 
 ---
 
-### 4. Multiplicateur équipe — retrouver la logique existante
+### 4. Multiplicateur équipe ✅ RÉGLÉ (session du 31/03/2026)
 
-**Contexte** : le multiplicateur (`TeamPerformance.multiplier`) va de 2.0 à 1.0 par steps de 0.1, basé sur les résultats combinés qualifs + course des deux pilotes de l'équipe. L'agence avait un système d'import CSV qui calculait ce multiplicateur automatiquement.
+**Logique retrouvée dans `ResultCrudController.php`** : le multiplicateur est basé sur le **classement des équipes par score**. Score équipe = `qualPos_d1 + racePos_d1 + qualPos_d2 + racePos_d2` (plus c'est bas, meilleure est l'équipe). Tri ASC → rank 1 = meilleure équipe → `TeamMultiplierEnum::P_1 = 20` → ×2.0.
 
-**À faire au démarrage de session** : lire `TeamMultiplierEnum` + chercher dans le code existant comment ce multiplicateur était calculé :
-```bash
-grep -r "multiplier\|TeamMultiplier" api/src --include="*.php" -l
-cat api/src/Performance/Domain/Enum/TeamMultiplierEnum.php
-grep -r "setMultiplier" api/src --include="*.php" -n
-```
+**Fix appliqué dans `ImportRaceCommand`** : après le dispatch de tous les `SaveTeamPerformanceCommand`, tri `uasort` par score ASC, puis `setPosition(rank)` + `setMultiplier(TeamMultiplierEnum::getPointsFromPosition(rank)->value)`.
 
-**Hypothèse** : le multiplicateur est calculé à partir du score combiné des deux pilotes (qualif + course) comparé au meilleur score de l'équipe de tête, puis mappé sur l'enum. À confirmer en lisant le code existant.
+**Résultat GP#1 Australie** : Mercedes ×2.0 → Aston Martin ×1.0, cohérent avec les résultats réels.
 
 ---
 
