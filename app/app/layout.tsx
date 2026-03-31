@@ -39,7 +39,9 @@ export default async function RootLayout({
       <body className={session ? "user-logged" : ""}>
         <ServiceWorker />
         <SubscriptionNotif />
-        {children}
+        <div className="mx-auto w-full max-w-[480px] bg-black min-h-screen">
+          {children}
+        </div>
         <Toaster />
       </body>
     </html>

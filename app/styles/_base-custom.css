@@ -1,6 +1,7 @@
 @layer base {
     body {
-      @apply bg-black text-base;
+      @apply text-base;
+      background-color: #1C1D1F;
     }
 
     body.user-logged {

@@ -11,7 +11,7 @@ import { CHAMPIONSHIP_LISTING_PAGE, HOME_PAGE, MY_PADDOCK_PAGE, QUIZ_PAGE, SHOP_
 
 const Menu = () => {
   return (
-    <nav className="fixed bottom-0 bg-black border-t border-[#3D3E40] flex w-full h-14 z-10">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 bg-black border-t border-[#3D3E40] flex w-full max-w-[480px] h-14 z-10">
       <div className="flex justify-end flex-1 h-full">
         <MenuItem title={language.hub.championship} href={CHAMPIONSHIP_LISTING_PAGE}>
           <IconTrophy />
