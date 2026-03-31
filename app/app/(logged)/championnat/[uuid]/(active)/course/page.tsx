@@ -12,6 +12,7 @@ import { ChampionshipTitle } from "../components/ChampionshipTitle";
 import { CHAMPIONSHIP_RANKING_PAGE, OTHER_USER_PROFILE_PAGE } from "@/constants/routing";
 import { redirect } from "next/navigation";
 import { StrategyForm } from "./components/StrategyForm";
+import { LocalDateTime } from "@/components/custom/local-datetime";
 
 export default async function RaceStrategy({params : { uuid }}: {params: { uuid: string }}) {
   const token = cookies().get("session")?.value;
@@ -56,19 +57,6 @@ export default async function RaceStrategy({params : { uuid }}: {params: { uuid:
     redirect(CHAMPIONSHIP_RANKING_PAGE(uuid));
   }
 
-  const convertDateHours = (date: any) => {
-    const dateString = date.toLocaleString("fr-FR", {
-      //timeZone: 'UTC',
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      //second: 'numeric',
-    });
-    return (dateString);
-  }
   const convertDate = (date: any) => {
     const dateString = date.toLocaleString("fr-FR", {
       weekday: 'long',
@@ -89,7 +77,6 @@ export default async function RaceStrategy({params : { uuid }}: {params: { uuid:
   raceDateString = raceDateString.charAt(0).toUpperCase() + raceDateString.slice(1);
 
   const strategyEndDate = new Date(race.limitStrategyDate);
-  const strategyEndDateString = convertDateHours(strategyEndDate);
 
   const getTotalTimeRemaining = (e: any) => {
     const total = Date.parse(e) - Date.parse(new Date().toString());
@@ -131,7 +118,7 @@ export default async function RaceStrategy({params : { uuid }}: {params: { uuid:
                 <>
                   {language.championship.race.strategy_end}&nbsp;
                   <Countdown roundEndDate={strategyEndDate} timeRemaining={timeRemaining.total} isStrategyCountdown={true} />&nbsp;
-                  {language.championship.race.strategy_end2} {strategyEndDateString})
+                  {language.championship.race.strategy_end2} <LocalDateTime isoDate={race.limitStrategyDate} />)
                 </>
               )}
               <Separator className="mt-3 bg-gradient-to-r from-white-6 to-black" />
