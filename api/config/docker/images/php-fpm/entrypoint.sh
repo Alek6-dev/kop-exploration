@@ -30,8 +30,9 @@ FORCED_USER_ID=${LOCAL_USER_ID:-9001}
 
 echo "Starting with UID: $FORCED_USER_ID"
 
-useradd --shell /bin/bash --no-create-home --home $HOME -u $FORCED_USER_ID -o -c "" kop
+id kop > /dev/null 2>&1 || useradd --shell /bin/bash --no-create-home --home $HOME -u $FORCED_USER_ID -o -c "" kop
 
 chown -R $FORCED_USER_ID $HOME
+touch /var/log/php-fpm.log && chown $FORCED_USER_ID /var/log/php-fpm.log
 
 exec gosu kop "$@"

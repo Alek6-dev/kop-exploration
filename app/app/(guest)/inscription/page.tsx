@@ -15,7 +15,7 @@ export default async function InscriptionScreen() {
     throw new Error(parameters.message);
   }
 
-  const userConfirmationByAdmin:number = parameters.find((el: { code: string; }) => el.code === "user_confirmation_by_admin")["value"];
+  const userConfirmationByAdmin:number = parameters.find((el: { code: string; }) => el.code === "user_confirmation_by_admin")?.["value"] ?? 0;
 
   return (
     <main>

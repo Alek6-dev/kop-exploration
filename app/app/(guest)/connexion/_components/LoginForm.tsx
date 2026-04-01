@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/custom/password-input";
 import { Button } from "@/components/ui/button";
 import language from "@/messages/fr";
 import Link from "next/link";
@@ -99,8 +100,7 @@ const LoginForm = () => {
             <FormItem className="form-item">
               <FormLabel>{language.login.form.field.password.label}</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder={language.login.form.field.password.placeholder}
                   {...field}
                 />
