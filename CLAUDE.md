@@ -283,12 +283,50 @@ Le propriétaire du projet (profil non-technique, junior en développement) souh
 - Un championnat passe par 8 états définis dans `ChampionshipStatusEnum` (CREATED → BID_IN_PROGRESS → ... → OVER)
 - Fix appliqué : `Header.tsx` ligne 46 — `creditWallet?.credit ?? 0` pour éviter le crash si le portefeuille est null
 
-### Config Git (mise en place en session 4)
+### Config Git (mise en place en session 4, renommage en session 6)
 
-- `origin` → `https://github.com/Alek6-dev/kop-exploration.git` (repo perso — push ici)
-- `upstream` → `https://github.com/King-Of-Paddock/kop-app` (repo officiel — pull ici uniquement)
-- Pour récupérer le code du freelance : `git pull upstream main`
+- `perso` → `https://github.com/Alek6-dev/kop-exploration.git` (repo perso — push quotidien ici)
+- `officiel` → `https://github.com/King-Of-Paddock/kop-app` (repo du freelance — PR uniquement)
+- Pour récupérer le code du freelance : `git pull officiel main`
 - Le dossier vient d'un **vrai clone** du repo officiel (pas un ZIP) depuis le 30/03/2026
+
+### Workflow pour soumettre une feature au freelance
+
+Ce workflow est à suivre à chaque fois qu'une feature est prête à être soumise en review.
+
+**Au quotidien (brouillon)**
+- On travaille sur `main` en local
+- Push de sauvegarde en fin de session : `git push perso main`
+
+**Quand une feature est prête**
+
+1. Identifier les fichiers concernés par la feature (uniquement les nouveaux fichiers et modifications liées)
+2. Vérifier qu'aucun fichier supprimé ou sans rapport ne se glisse dedans
+3. Créer une branche propre depuis le repo officiel :
+   ```bash
+   git checkout -b feat/nom-de-la-feature officiel/main
+   ```
+4. Copier uniquement les fichiers de la feature depuis `main` :
+   ```bash
+   git checkout main -- chemin/fichier1 chemin/fichier2
+   ```
+5. Vérifier ce qui va être commité : `git status`
+6. Commiter et pusher sur le repo officiel :
+   ```bash
+   git commit -m "feat: description claire"
+   git push officiel feat/nom-de-la-feature
+   ```
+7. Créer la PR sur GitHub : `github.com/King-Of-Paddock/kop-app` → Pull requests → New pull request
+   - base : `main` / compare : `feat/nom-de-la-feature`
+   - Titre et description clairs pour le freelance
+8. Prévenir le freelance par message qu'une PR est ouverte
+9. Revenir sur `main` : `git checkout main`
+
+**Règles importantes**
+- Ne jamais pusher `main` directement sur `officiel`
+- Une branche = une feature (pas une branche permanente, pas une branche par session)
+- Toujours vérifier `git status` avant de commiter sur une branche officielle
+- Le freelance voit uniquement ce qui est pushé sur `officiel` — `perso` est invisible pour lui
 
 ### Commandes de remise en route après un clone / recréation complète
 
