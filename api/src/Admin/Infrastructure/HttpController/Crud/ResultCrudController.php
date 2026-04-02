@@ -40,6 +40,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -161,8 +163,18 @@ final class ResultCrudController extends AbstractCrudController
         ;
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters->add(BooleanFilter::new('isArchived', 'Archivé'));
+    }
+
     public function configureActions(Actions $actions): Actions
     {
+        $archiveAction = Action::new('archiveEntity', 'Archiver', 'fa fa-archive')
+            ->linkToCrudAction('archiveEntity')
+            ->displayIf(static fn (Result $result) => !$result->isArchived())
+        ;
+
         return $actions
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
@@ -171,10 +183,28 @@ final class ResultCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_RETURN)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $archiveAction)
+            ->add(Crud::PAGE_DETAIL, $archiveAction)
             ->add(Crud::PAGE_DETAIL, $this->getDeleteAction('delete_result'))
             ->add(Crud::PAGE_DETAIL, $this->getGeneratePerformanceAction('generate_performance'))
             ->add(Crud::PAGE_NEW, $this->getImportAction())
         ;
+    }
+
+    public function archiveEntity(AdminContext $context): RedirectResponse
+    {
+        /** @var Result $entity */
+        $entity = $context->getEntity()->getInstance();
+        $entity->setIsArchived(true);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Résultat archivé avec succès.');
+
+        return $this->redirect($this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::INDEX)
+            ->setEntityId(null)
+            ->generateUrl());
     }
 
     private function getDeleteAction(string $name): Action
@@ -547,12 +577,19 @@ final class ResultCrudController extends AbstractCrudController
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
-        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
             ->addGroupBy('entity.season')
             ->addGroupBy('entity.race')
             ->distinct()
             ->addOrderBy('entity.season')
             ->addOrderBy('entity.race')
         ;
+
+        if (!isset($searchDto->getAppliedFilters()['isArchived'])) {
+            $qb->andWhere('entity.isArchived = :isArchived')
+                ->setParameter('isArchived', false);
+        }
+
+        return $qb;
     }
 }

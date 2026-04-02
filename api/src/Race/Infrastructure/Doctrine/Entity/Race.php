@@ -9,6 +9,7 @@ use App\Race\Domain\Model\RaceInterface;
 use App\Race\Infrastructure\Doctrine\Repository\DoctrineRaceRepository;
 use App\Season\Domain\Model\SeasonRaceInterface;
 use App\Season\Infrastructure\Doctrine\Entity\SeasonRace;
+use App\Shared\Infrastructure\Doctrine\Entity\Traits\ArchivableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\IdableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\TimestampableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\UuidableTrait;
@@ -22,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: DoctrineRaceRepository::class)]
 class Race implements RaceInterface
 {
+    use ArchivableTrait;
     use IdableTrait;
     use TimestampableTrait;
     use UuidableTrait;

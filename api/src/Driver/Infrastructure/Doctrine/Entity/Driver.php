@@ -10,6 +10,7 @@ use App\Driver\Infrastructure\Doctrine\Repository\DoctrineDriverRepository;
 use App\Performance\Domain\Model\DriverPerformanceInterface;
 use App\Performance\Infrastructure\Doctrine\Entity\DriverPerformance;
 use App\Result\Infrastructure\Doctrine\Entity\Result;
+use App\Shared\Infrastructure\Doctrine\Entity\Traits\ArchivableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\HasImageTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\HasMinValueTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\HasResultTrait;
@@ -31,6 +32,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: DoctrineDriverRepository::class)]
 class Driver implements DriverInterface
 {
+    use ArchivableTrait;
     use HasImageTrait;
     use HasMinValueTrait;
     use HasResultTrait;

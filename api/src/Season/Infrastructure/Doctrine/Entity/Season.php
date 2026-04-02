@@ -11,6 +11,7 @@ use App\Season\Domain\Model\SeasonInterface;
 use App\Season\Domain\Model\SeasonRaceInterface;
 use App\Season\Domain\Model\SeasonTeamInterface;
 use App\Season\Infrastructure\Doctrine\Repository\DoctrineSeasonRepository;
+use App\Shared\Infrastructure\Doctrine\Entity\Traits\ArchivableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\IdableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\TimestampableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\UuidableTrait;
@@ -25,6 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: DoctrineSeasonRepository::class)]
 class Season implements SeasonInterface
 {
+    use ArchivableTrait;
     use IdableTrait;
     use TimestampableTrait;
     use UuidableTrait;

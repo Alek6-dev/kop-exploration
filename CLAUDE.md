@@ -440,6 +440,7 @@ Géré manuellement en admin. Trop complexe et source de bugs critiques (cas vé
 - Comptes de test créés directement en BDD (voir section "Comptes de test")
 - Import F1 Live Timing : `kop:f1:sync-season` + `kop:f1:import-race` → `api/src/Shared/Infrastructure/Console/F1/`
 - Fix timezone heure limite stratégie : composant `LocalDateTime` client-side → `app/components/custom/local-datetime.tsx`
+- Archivage des entités (Race, Season, Team, Driver, Result) : `ArchivableTrait` + action "Archiver" dans EasyAdmin + filtre "Archivé"
 
 ---
 
@@ -474,20 +475,7 @@ Géré manuellement en admin. Trop complexe et source de bugs critiques (cas vé
 
 ## PROCHAINE SESSION — Points à traiter
 
-### 1. Archivage des entités (Race, Season, Team, Driver)
-
-**Problème** : impossible de supprimer une Race dans EasyAdmin car la table `result` a une FK `race_id` sans CASCADE. Erreur : `ForeignKeyConstraintViolationException`.
-
-**Décision** : système d'**archivage** (pas suppression cascade), les données restent en base.
-
-**Plan** :
-1. Créer un trait `ArchivableTrait` dans `api/src/Shared/Infrastructure/Doctrine/Entity/Traits/` avec `isArchived: bool = false` + getter/setter.
-2. Ajouter ce trait sur : `Race`, `Season`, `Team`, `Driver`.
-3. Migration Doctrine : `make api-console ARGS="doctrine:migrations:diff"` puis `migrate`.
-4. CRUD controllers EasyAdmin : remplacer "Delete" par action "Archiver", filtrer les listes sur `isArchived = false`.
-5. Repositories : ajouter filtre `withNotArchived()`.
-
-**Où sont les CRUD controllers** : `find api/src -name "*CrudController*"` au démarrage.
+### 1. Bugs pipeline de résultats
 
 ### 2. Bugs pipeline de résultats
 Données fausses ou manquantes identifiées lors des tests de scoring — à investiguer avec les résultats réels en main.

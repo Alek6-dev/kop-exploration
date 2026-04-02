@@ -13,6 +13,7 @@ use App\Result\Domain\Model\ResultLapInterface;
 use App\Result\Infrastructure\Doctrine\Repository\DoctrineResultRepository;
 use App\Season\Domain\Model\SeasonInterface;
 use App\Season\Infrastructure\Doctrine\Entity\Season;
+use App\Shared\Infrastructure\Doctrine\Entity\Traits\ArchivableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\IdableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\TimestampableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\UuidableTrait;
@@ -31,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Result implements ResultInterface
 {
+    use ArchivableTrait;
     use IdableTrait;
     use TimestampableTrait;
     use UuidableTrait;

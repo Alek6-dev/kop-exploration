@@ -10,6 +10,7 @@ use App\Performance\Domain\Model\TeamPerformanceInterface;
 use App\Performance\Infrastructure\Doctrine\Entity\TeamPerformance;
 use App\Result\Infrastructure\Doctrine\Entity\Result;
 use App\Season\Infrastructure\Doctrine\Entity\SeasonTeam;
+use App\Shared\Infrastructure\Doctrine\Entity\Traits\ArchivableTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\HasImageTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\HasMinValueTrait;
 use App\Shared\Infrastructure\Doctrine\Entity\Traits\HasResultTrait;
@@ -31,6 +32,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: DoctrineTeamRepository::class)]
 class Team implements TeamInterface
 {
+    use ArchivableTrait;
     use HasImageTrait;
     use HasMinValueTrait;
     use HasResultTrait;
