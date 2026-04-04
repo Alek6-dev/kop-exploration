@@ -22,6 +22,7 @@ RESET = \033[0m
 .SILENT:
 .PHONY: help install build dev up down restart logs \
         api-up api-down api-restart api-build api-install api-setup api-db api-test \
+        api-publish-notifications api-notifications-worker \
         app-up app-down app-restart app-build app-install app-dev app-lint \
         clean
 
@@ -106,6 +107,16 @@ api-db: ## Setup API database with fixtures
 api-test: ## Run API tests
 	@echo "$(CYAN)--> Running API tests$(RESET)"
 	@$(MAKE) -C $(API_DIR) pest-run
+
+api-publish-notifications: ## Publish scheduled notifications (one-shot)
+	@docker exec kop-php-1 gosu kop php /var/www/kop/bin/console kop:notifications:publish-scheduled
+
+api-notifications-worker: ## Run notification scheduler locally (simulates cron, toutes les 60s)
+	@echo "$(CYAN)--> Notification worker démarré (Ctrl+C pour arrêter)$(RESET)"
+	@while true; do \
+		docker exec kop-php-1 gosu kop php /var/www/kop/bin/console kop:notifications:publish-scheduled; \
+		sleep 60; \
+	done
 
 # ============================================================================
 # APP COMMANDS

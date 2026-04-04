@@ -23,13 +23,13 @@ export default async function Profile() {
     "Content-Type": "application/json",
   }
 
-  const resCreditPacks = await fetch(`${process.env.NEXT_PUBLIC_REST_URL}/credit_packs`, { headers });
+  const resCreditPacks = await fetch(`${process.env.NEXT_PUBLIC_REST_URL}/credit_packs`, { headers, cache: 'no-store' });
   const packsData = await resCreditPacks.json();
   if (!resCreditPacks.ok) {
     throw new Error(packsData.message);
   }
 
-  const resUserData = await fetch(`${process.env.NEXT_PUBLIC_REST_URL}/users/${session?.id}`, { headers });
+  const resUserData = await fetch(`${process.env.NEXT_PUBLIC_REST_URL}/users/${session?.id}`, { headers, cache: 'no-store' });
   const userData = await resUserData.json();
   if (!resUserData.ok) {
     throw new Error(userData.message);
@@ -47,7 +47,7 @@ export default async function Profile() {
       </Container>
 
       <Container className="mt-6">
-        <AvailableCredits credits={userData.creditWallet.credit} />
+        <AvailableCredits credits={userData.creditWallet?.credit ?? 0} />
 
         <Block containerClassName="block-animation mt-4" childClassName="p-4">
             <h2 className="h3 mb-3">{language.wallet.utility.title}</h2>

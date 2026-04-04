@@ -111,6 +111,14 @@
     }
   }
 
+  .notification-body {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    a {
+      @apply text-primary underline;
+    }
+  }
+
   .block-cms {
     h2 {
       @apply h3 mb-4 mt-2 text-primary;

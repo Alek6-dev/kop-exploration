@@ -6,7 +6,7 @@ import { Block } from "@/components/custom/block";
 import { LogoutButton } from "@/app/(guest)/_components/LogoutButton";
 import { Stats, StatsArray } from "@/components/custom/stats";
 import { cookies } from "next/headers";
-import { ABOUT_PAGE, PROFILE_DELETE_PAGE, PROFILE_EDIT_PAGE } from "@/constants/routing";
+import { ABOUT_PAGE, NOTIFICATIONS_PAGE, PROFILE_DELETE_PAGE, PROFILE_EDIT_PAGE } from "@/constants/routing";
 import { A } from "@/components/custom/link";
 import { Separator } from "@/components/custom/separator";
 import { LinkBlock } from "@/components/custom/linkBlock";
@@ -22,6 +22,13 @@ export default async function Profile() {
 
   const resStats = await fetch(`${process.env.NEXT_PUBLIC_REST_URL}/statistics/user/${uuid}`, { headers });
   const stats = await resStats.json();
+
+  const resNotifications = await fetch(`${process.env.NEXT_PUBLIC_REST_URL}/notifications`, {
+    headers,
+    cache: "no-store",
+  });
+  const notifications = resNotifications.ok ? await resNotifications.json() : [];
+  const hasUnreadNotifications = Array.isArray(notifications) && notifications.some((n: { isRead: boolean }) => !n.isRead);
 
   //console.log("user stats : ", stats);
 
@@ -71,6 +78,7 @@ export default async function Profile() {
         }
         </Block>
 
+        <LinkBlock title="Notifications" url={NOTIFICATIONS_PAGE} description="Tes dernières actualités et alertes" badge={hasUnreadNotifications} />
         <LinkBlock title={language.profile.links.edit.title} url={PROFILE_EDIT_PAGE} description={language.profile.links.edit.description} />
         <LinkBlock title={language.profile.links.about.title} url={ABOUT_PAGE} description={language.profile.links.about.description}/>
 

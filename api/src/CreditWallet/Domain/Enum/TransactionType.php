@@ -12,6 +12,10 @@ enum TransactionType: string
 
     case CONSUME_COSMETIC = 'consume_cosmetic';
 
+    case ADMIN_GRANT = 'admin_grant';
+
+    case ADMIN_DEDUCTION = 'admin_deduction';
+
     /**
      * @return TransactionType[]
      */
@@ -20,10 +24,12 @@ enum TransactionType: string
         return match ($operation) {
             TransactionOperator::CONSUME => [
                 self::CONSUME_COSMETIC,
+                self::ADMIN_DEDUCTION,
             ],
             TransactionOperator::CREDIT => [
                 self::CREDIT_WALLET,
                 self::CREDIT_SPONSORSHIP,
+                self::ADMIN_GRANT,
             ],
         };
     }

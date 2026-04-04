@@ -24,6 +24,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 '%kernel.project_dir%/src/Cosmetic/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/CreditWallet/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Driver/Infrastructure/ApiPlatform/Resource/',
+                '%kernel.project_dir%/src/Notification/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Duel/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Player/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Parameter/Infrastructure/ApiPlatform/Resource/',

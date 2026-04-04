@@ -75,6 +75,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     'dir' => '%kernel.project_dir%/src/Duel/Infrastructure',
                     'prefix' => 'App\Duel\Infrastructure',
                 ],
+                'Notification' => [
+                    'is_bundle' => false,
+                    'type' => 'attribute',
+                    'dir' => '%kernel.project_dir%/src/Notification/Infrastructure',
+                    'prefix' => 'App\Notification\Infrastructure',
+                ],
                 'Parameter' => [
                     'is_bundle' => false,
                     'type' => 'attribute',

@@ -8,7 +8,9 @@ use App\Admin\Application\Query\Stat\CountChampionships\CountChampionshipsQuery;
 use App\Admin\Application\Query\Stat\CountTransactionsByType\CountTransactionsByTypeQuery;
 use App\Admin\Application\Query\Stat\CountUsers\CountUsersQuery;
 use App\Admin\Infrastructure\Doctrine\Entity\UserAdmin;
+use App\CreditWallet\Infrastructure\Doctrine\Entity\AdminCreditGrant;
 use App\Bonus\Infrastructure\Doctrine\Entity\Bonus;
+use App\Notification\Infrastructure\Doctrine\Entity\Notification;
 use App\Championship\Domain\Enum\ChampionshipStatusEnum;
 use App\Cosmetic\Infrastructure\Doctrine\Entity\Cosmetic;
 use App\CreditWallet\Domain\Enum\TransactionType;
@@ -121,6 +123,18 @@ final class DashboardController extends AbstractDashboardController
             t('dashboard.menu.parameter.section', domain: 'admin'),
             '',
             Parameter::class,
+        );
+
+        yield MenuItem::linkToCrud(
+            t('dashboard.menu.notification.section', domain: 'admin'),
+            '',
+            Notification::class,
+        );
+
+        yield MenuItem::linkToCrud(
+            t('dashboard.menu.credit_grant.section', domain: 'admin'),
+            '',
+            AdminCreditGrant::class,
         );
     }
 

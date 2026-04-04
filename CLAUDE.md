@@ -215,7 +215,7 @@ pnpm run build
 
 ### Lancement quotidien (après la mise en place initiale)
 
-Ouvrir deux terminaux :
+Ouvrir deux terminaux (trois si on teste les notifications programmées) :
 
 **Terminal 1 — Backend**
 ```bash
@@ -227,6 +227,14 @@ make api-up
 ```bash
 cd /home/alek6dev/kop-app-main
 make app-dev
+```
+
+**Terminal 3 — Worker notifications (optionnel, uniquement pour tester la programmation)**
+```bash
+cd /home/alek6dev/kop-app-main
+make api-notifications-worker   # tourne toutes les 60s, Ctrl+C pour arrêter
+# OU en one-shot :
+make api-publish-notifications
 ```
 
 Puis ouvrir https://localhost:3000 (app) et https://kop.local/admin (admin) dans Chrome.
@@ -469,13 +477,217 @@ Géré manuellement en admin. Trop complexe et source de bugs critiques (cas vé
 
 ### Ce qui reste à faire sur ce pipeline
 - `minValue` pilotes/équipes : formule basée sur les résultats des 3-4 derniers GP (forme actuelle) — session dédiée
-- Bugs dans le pipeline de résultats identifiés lors des tests — à investiguer en prochaine session
 
 ---
 
-## PROCHAINE SESSION — Points à traiter
+## FEATURE EN COURS — Centre de notifications in-app
 
-### 1. Bugs pipeline de résultats
+Développement découpé en **3 blocs** à traiter dans des sessions séparées.
 
-### 2. Bugs pipeline de résultats
-Données fausses ou manquantes identifiées lors des tests de scoring — à investiguer avec les résultats réels en main.
+---
+
+### SPEC COMPLÈTE
+
+#### Contexte
+Les résultats de course sont figés après génération. Si une pénalité F1 arrive le lendemain, impossible de corriger les scores dans les championnats et d'en informer les joueurs. Le centre de notifications résout le problème de communication, et sera branché sur le système de recalcul quand celui-ci sera développé.
+
+#### Point d'entrée dans l'app
+- Icône profil en haut à droite du hub joueur (déjà existante)
+- **Rond rouge** sur cette icône tant qu'il existe des notifications non lues — pas de numéro, juste le rond
+- La page Notifications est accessible depuis la section profil
+
+#### La page Notifications
+- Liste triée par date décroissante
+- Chaque ligne : titre + indicateur visuel lu/non lu
+- Clic sur une notif → ouvre le corps complet + passe en "lue"
+- Bouton **"Tout marquer comme lu"** — vide le rond rouge sans tout ouvrir
+- Suppression individuelle possible par le joueur
+- Expiration automatique après **6 mois**, suppression silencieuse
+
+#### Structure d'une notification
+- **Titre** — affiché dans la liste
+- **Corps** — affiché à l'ouverture
+- **Liens interactifs** optionnels dans le corps : texte souligné en doré, redirige vers un élément de l'app (championnat, boutique, fonctionnalité). Ex : *"Ton score dans [Championship Été 2026] a changé"*
+- **Catégorie** — détermine la couleur/icône (tons app : doré, gris foncé, blanc — à affiner en phase design)
+
+#### Types de notifications
+
+**Système — générées automatiquement :**
+| Type | Destinataires | Déclencheur |
+|---|---|---|
+| Résultat GP publié | Tous | Import résultats |
+| Correction GP — générique | Joueurs non impactés directement | Recalcul résultats |
+| Correction GP — détaillée | Joueurs avec championnat impacté | Recalcul résultats |
+| Crédit reçu | Joueur concerné | Attribution crédit |
+
+La notif de correction détaillée liste dans son corps **tous les championnats impactés** + delta score/récompenses dans chacun — une seule notif, pas une par championnat.
+
+**Éditorial — créées manuellement depuis EasyAdmin :**
+Programme week-end, rappel stratégie, nouvelle fonctionnalité, boutique, mise à jour app, contenu libre.
+
+#### La popup
+Réservée aux événements à fort impact (< 10/an) : correction championnat, nouvelle fonctionnalité majeure, mise à jour app.
+- S'affiche à la **première ouverture** après l'événement
+- Scrollable si contenu long
+- Fermée via croix en haut à droite ou bouton "Fermer" en bas
+- Non bloquante
+- Pointe vers la notif correspondante dans la page Notifications
+- Ne se réaffiche pas après fermeture
+
+#### Administration EasyAdmin — notifs éditoriales
+- Titre + corps avec mise en forme basique (gras, italique, liens)
+- Type / catégorie
+- Ciblage : tous les joueurs **ou** sélection manuelle (liste + recherche par nom/email/pseudo)
+- Programmation : immédiate **ou** date/heure future
+- Historique des notifs envoyées, annulation possible si pas encore envoyée
+
+#### Hors scope pour cette feature
+- Notifications push (sujet séparé)
+- Recalcul des résultats (feature séparée, à brancher ensuite)
+- Personnalisation des couleurs (décision UI phase design)
+- Automatisation notifs "mise à jour app"
+
+---
+
+### BLOC 1 — Structure de données + Administration ✅ TERMINÉ (02/04/2026)
+
+**Fichiers créés :**
+- `api/src/Notification/Domain/Enum/NotificationTypeEnum.php` — enum string (SYSTEM_RESULT_PUBLISHED, SYSTEM_CORRECTION_GENERIC, SYSTEM_CORRECTION_DETAILED, SYSTEM_CREDIT, EDITORIAL)
+- `api/src/Notification/Infrastructure/Doctrine/Entity/Notification.php` — entité principale
+- `api/src/Notification/Infrastructure/Doctrine/Entity/NotificationRead.php` — table lu/non lu par joueur
+- `api/src/Notification/Infrastructure/Doctrine/Repository/DoctrineNotificationRepository.php`
+- `api/src/Notification/Infrastructure/Doctrine/Repository/DoctrineNotificationReadRepository.php`
+- `api/src/Admin/Infrastructure/HttpController/Crud/NotificationCrudController.php`
+
+**Fichiers modifiés :**
+- `api/config/packages/doctrine.php` — domaine `Notification` enregistré
+- `api/src/Admin/Infrastructure/HttpController/DashboardController.php` — menu "Notifications" ajouté
+- `api/translations/admin.fr.yaml` — traductions FR du CRUD
+- `api/config/database/migrations/Version20260402140100.php` — migration appliquée (tables `notification`, `notification_targets`, `notification_read`)
+
+**Pièges rencontrés à ne pas reproduire :**
+- `DoctrineRepository` (classe parente des repos du projet) n'étend PAS `EntityRepository` → `AssociationField` d'EasyAdmin plante si on le laisse chercher le repo seul. Fix : passer un `QueryBuilder` via `$this->em->createQueryBuilder()` dans `setFormTypeOption('query_builder', ...)`
+- `ChoiceField` avec un enum PHP : besoin d'un callback `choice_value` pour l'affichage ET le setter doit accepter `NotificationTypeEnum|string` avec `NotificationTypeEnum::from($value)` pour la soumission du formulaire
+- Tout nouveau domaine DDD doit être déclaré dans `api/config/packages/doctrine.php` sous `orm.mappings`, sinon Doctrine ignore les entités
+
+---
+
+### BLOC 2 — App joueur (page Notifications + rond rouge) ✅ TERMINÉ (03/04/2026)
+
+**Fichiers créés :**
+- `api/src/Notification/Application/Query/GetNotificationsForUser/` — Query + Handler
+- `api/src/Notification/Application/Command/MarkNotificationRead/` — Command + Handler
+- `api/src/Notification/Application/Command/MarkAllNotificationsRead/` — Command + Handler
+- `api/src/Notification/Application/Command/DeleteNotification/` — Command + Handler
+- `api/src/Notification/Infrastructure/ApiPlatform/Resource/NotificationResource.php`
+- `api/src/Notification/Infrastructure/ApiPlatform/State/Provider/NotificationCollectionProvider.php`
+- `api/src/Notification/Infrastructure/ApiPlatform/State/Provider/NotificationItemProvider.php`
+- `api/src/Notification/Infrastructure/ApiPlatform/State/Processor/MarkNotificationReadProcessor.php`
+- `api/src/Notification/Infrastructure/ApiPlatform/State/Processor/MarkAllNotificationsReadProcessor.php`
+- `api/src/Notification/Infrastructure/ApiPlatform/State/Processor/DeleteNotificationProcessor.php`
+- `app/actions/notifications/markNotificationRead-action.ts`
+- `app/actions/notifications/markAllNotificationsRead-action.ts`
+- `app/actions/notifications/deleteNotification-action.ts`
+- `app/app/(logged)/profil/notifications/page.tsx`
+- `app/app/(logged)/profil/notifications/_components/NotificationItem.tsx`
+- `app/app/(logged)/profil/notifications/_components/MarkAllReadButton.tsx`
+- `app/components/custom/notification-badge.tsx`
+
+**Fichiers modifiés :**
+- `app/app/_components/Header.tsx` — fetch notifs + NotificationBadge sur l'icône profil
+- `app/app/(logged)/profil/page.tsx` — fetch notifs + badge sur le LinkBlock "Notifications"
+- `app/components/custom/linkBlock.tsx` — prop `badge?: boolean` ajouté
+
+**Pièges résolus :**
+- `h-2.5`/`w-2.5` inexistants dans le Tailwind custom (spacing = entiers uniquement) → utiliser `h-[10px] w-[10px]`
+- Badge positionné avec `-top-[5px] -right-[5px]` pour déborder à cheval sur l'icône
+
+---
+
+### BLOC 3 — Popup + liens interactifs ✅ TERMINÉ (03/04/2026)
+
+**Fichiers créés :**
+- `api/src/Notification/Application/Query/GetPopupNotificationForUser/` — Query + Handler
+- `api/src/Notification/Infrastructure/ApiPlatform/State/Provider/NotificationPopupProvider.php`
+- `api/src/Shared/Infrastructure/Console/Notification/PublishScheduledNotificationsCommand.php`
+- `app/components/custom/notification-popup.tsx` — modal client-side
+- `api/config/database/migrations/Version20260403120000.php` — colonne `show_as_popup`
+
+**Fichiers modifiés :**
+- `api/src/Notification/Infrastructure/Doctrine/Entity/Notification.php` — champ `showAsPopup`
+- `api/src/Notification/Infrastructure/Doctrine/Repository/DoctrineNotificationRepository.php` — méthode `findPopupForUser`
+- `api/src/Notification/Infrastructure/ApiPlatform/Resource/NotificationResource.php` — opération `GET /notifications/popup` en première position (piège : conflit de route avec `/{uuid}`)
+- `api/src/Admin/Infrastructure/HttpController/Crud/NotificationCrudController.php` — champ "Afficher en popup ?"
+- `api/translations/admin.fr.yaml` — traduction `show_as_popup`
+- `app/app/(hub)/layout.tsx` — fetch popup + rendu `NotificationPopup`
+- `app/app/(logged)/profil/notifications/_components/NotificationItem.tsx` — classe `notification-body`
+- `app/styles/_components-custom.css` — `.notification-body a` (doré souligné) + `word-break: break-word`
+- `Makefile` — targets `api-publish-notifications` + `api-notifications-worker`
+
+**Comportement popup :**
+- La plus ancienne popup non lue s'affiche en premier (ordre ASC)
+- Fermer la popup = notif marquée comme lue = ne se réaffiche plus
+- Lire la notif depuis la liste = même effet, elle disparaît de la file des popups
+- Notifications programmées : fenêtre de tolérance 10 minutes (si le serveur était coupé plus longtemps, la notif est ignorée)
+
+**Piège résolu :**
+- L'opération `GET /notifications/popup` doit être déclarée EN PREMIER dans le tableau `operations[]` du `NotificationResource`. Sinon la route `GET /notifications/{uuid}` générée automatiquement par API Platform l'intercepte.
+
+**En production :**
+```
+* * * * * php /var/www/kop/bin/console kop:notifications:publish-scheduled
+```
+À ajouter au crontab serveur par le freelance.
+
+---
+
+## FEATURE TERMINÉE — Attribution de crédits par l'admin (EasyAdmin) ✅ (03/04/2026)
+
+### Objectif
+Permettre à un super-admin d'attribuer ou déduire des crédits manuellement depuis EasyAdmin, avec ciblage (tous les joueurs / un joueur / joueurs d'un championnat), motif visible par le joueur et notification automatique.
+
+### Fichiers créés
+
+**Backend :**
+- `api/src/CreditWallet/Domain/Enum/GrantTargetType.php` — enum string (ALL, PLAYER, CHAMPIONSHIP) avec `choices()` pour EasyAdmin
+- `api/src/CreditWallet/Infrastructure/Doctrine/Entity/AdminCreditGrant.php` — entité avec fields : uuid, amount, isDeduction, reason, targetType, targetPlayer (FK nullable), targetChampionship (FK nullable), excludedPlayers (ManyToMany), executedAt, createdAt
+- `api/src/CreditWallet/Application/Command/ExecuteCreditGrant/ExecuteCreditGrantCommand.php`
+- `api/src/CreditWallet/Application/Command/ExecuteCreditGrant/ExecuteCreditGrantCommandHandler.php` — résout les cibles, applique transactions, crée notifs système, crée le wallet à la volée si absent
+- `api/src/Admin/Infrastructure/HttpController/Crud/AdminCreditGrantCrudController.php` — formulaire EasyAdmin avec champs conditionnels (visibilité JS) et boutons renommés
+- `api/src/Admin/Infrastructure/HttpController/ChampionshipPlayersController.php` — route `GET /admin/api/championship-by-id/{id}/players` pour charger les joueurs d'un championnat en AJAX
+- `api/config/database/migrations/Version20260403140000.php` — tables `admin_credit_grant` + `admin_credit_grant_excluded_players` (appliquée)
+
+**Fichiers modifiés :**
+- `api/src/CreditWallet/Domain/Enum/TransactionType.php` — ajout `ADMIN_GRANT` + `ADMIN_DEDUCTION`
+- `api/src/CreditWallet/Domain/Enum/TransactionOperator.php` — match étendu aux nouveaux types
+- `api/src/Admin/Infrastructure/HttpController/DashboardController.php` — menu "Attributions de crédits" ajouté
+- `api/translations/admin.fr.yaml` — section `credit_grant` + `notification` ajoutées
+- `app/app/(logged)/portefeuille/page.tsx` — fix crash null wallet (`?.credit ?? 0`) + `cache: 'no-store'` sur les fetches
+
+### Pièges résolus (à ne pas reproduire)
+
+**EasyAdmin 4 n'appelle pas `form_row()` de Symfony** dans ses templates → `row_attr` et `addCssClass()` n'atterrissent jamais dans le DOM rendu. Pour les champs conditionnels, la seule approche fiable : poser `data-grant-field` directement sur l'`<input>`/`<select>` via `setFormTypeOption('attr', ...)`, puis en JS remonter le DOM avec une boucle jusqu'à un ancêtre `col-*` ou `form-group` pour le masquer/afficher.
+
+**`DoctrineRepository::findAll()` lève `LogicException('Not implemented')`** — toujours utiliser une DQL query directe : `$this->em->createQuery('SELECT u FROM ' . UserVisitor::class . ' u')->getResult()`.
+
+**Comptes créés directement en SQL** (test, admin) n'ont pas de `CreditWallet` associé. Le handler le crée à la volée quand il est null, plutôt que de silencieusement skiper l'utilisateur.
+
+**Next.js 14 App Router cache les `fetch()` server-side par défaut.** Ajouter `cache: 'no-store'` sur tout fetch qui doit refléter des données fraîches (solde, notifications, etc.).
+
+---
+
+## À FAIRE EN DÉBUT DE PROCHAINE SESSION — Commit de sauvegarde
+
+Commencer la session par un commit git `perso` pour sauvegarder l'état actuel de toutes les features terminées :
+
+```bash
+git add -A
+git commit -m "feat: notifications in-app + attribution crédits admin"
+git push perso main
+```
+
+Fichiers à inclure dans ce commit (toutes les features depuis le dernier commit) :
+- Centre de notifications (Bloc 1, 2, 3) — voir section BLOC 1/2/3 ci-dessus
+- Attribution de crédits admin — voir section ci-dessus
+- Fix portefeuille page crash
+

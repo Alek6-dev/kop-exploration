@@ -27,6 +27,7 @@ export const PROFILE_PAGE = "/profil";
 export const OTHER_USER_PROFILE_PAGE = (uuid:string):string => `/profil/${uuid}`;
 export const PROFILE_EDIT_PAGE = "/profil/editer";
 export const PROFILE_DELETE_PAGE = "/profil/supprimer";
+export const NOTIFICATIONS_PAGE = "/profil/notifications";
 export const PROFILE_CONFIRMATION_DELETE_PAGE = "/confirmation-suppression";
 
 // WALLET

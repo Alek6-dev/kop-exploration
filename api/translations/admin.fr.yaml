@@ -369,6 +369,39 @@ dashboard:
                             label: 'Code'
                         value:
                             label: 'Valeur'
+        credit_grant:
+            section: 'Attributions de crédits'
+        notification:
+            section: 'Notifications'
+            crud:
+                index:
+                    title: 'Liste des notifications'
+                detail:
+                    title: 'Notification "%notification%"'
+                edit:
+                    title: 'Modifier la notification "%notification%"'
+                new:
+                    title: 'Créer une notification'
+                item:
+                    field:
+                        title:
+                            label: 'Titre'
+                        body:
+                            label: 'Contenu'
+                        type:
+                            label: 'Type'
+                        is_for_all:
+                            label: 'Pour tous les joueurs ?'
+                        show_as_popup:
+                            label: 'Afficher en popup ?'
+                        targets:
+                            label: 'Joueurs ciblés'
+                        scheduled_at:
+                            label: 'Date d''envoi programmée'
+                        published_at:
+                            label: 'Envoyée le'
+                        created_at:
+                            label: 'Créée le'
 
 forgot_password_request:
     title: 'Mot de passe oublié'
