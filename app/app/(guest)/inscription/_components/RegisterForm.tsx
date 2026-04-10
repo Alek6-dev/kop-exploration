@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/custom/password-input";
 import { Button } from "@/components/ui/button";
 import language from "@/messages/fr";
 import { Separator } from "@/components/custom/separator";
@@ -142,8 +143,7 @@ const RegisterForm = ({userConfirmationByAdmin}: RegisterFormProps) => {
                 {language.registration.form.field.password.label}
               </FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder={
                     language.registration.form.field.password.placeholder
                   }
@@ -163,8 +163,7 @@ const RegisterForm = ({userConfirmationByAdmin}: RegisterFormProps) => {
                 {language.registration.form.field.password_confirm.label}
               </FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder={
                     language.registration.form.field.password_confirm
                       .placeholder

@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/custom/password-input";
 import { Button } from "@/components/ui/button";
 import language from "@/messages/fr";
 import router, { useRouter } from "next/navigation";
@@ -80,7 +81,7 @@ const ReinitialiserMotDePasseForm = ({ token }: { token: string }) => {
             <FormItem className="form-item">
               <FormLabel>{language.forgot_password_action.form.field.password.first_options.label}</FormLabel>
               <FormControl>
-                <Input type="password" placeholder={language.forgot_password_action.form.field.password.first_options.placeholder} {...field} />
+                <PasswordInput placeholder={language.forgot_password_action.form.field.password.first_options.placeholder} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,7 +94,7 @@ const ReinitialiserMotDePasseForm = ({ token }: { token: string }) => {
             <FormItem className="form-item">
               <FormLabel>{language.forgot_password_action.form.field.password.second_options.label}</FormLabel>
               <FormControl>
-                <Input type="password" placeholder={language.forgot_password_action.form.field.password.second_options.placeholder} {...field} />
+                <PasswordInput placeholder={language.forgot_password_action.form.field.password.second_options.placeholder} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
