@@ -1,0 +1,2 @@
+* * * * * cd /var/www/kop && php bin/console app:championship:assign-item >> /proc/1/fd/1 2>&1 && php bin/console app:championship:assign-auto >> /proc/1/fd/1 2>&1 && php bin/console app:championship:assign-races >> /proc/1/fd/1 2>&1
+* * * * * cd /var/www/kop && php bin/console app:championship:end-strategy >> /proc/1/fd/1 2>&1

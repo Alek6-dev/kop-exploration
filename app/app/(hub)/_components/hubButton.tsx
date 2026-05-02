@@ -11,14 +11,19 @@ export interface HubButtonProps {
     icon: string,
     className: string,
     iconClassName: string,
+    badge?: string,
 }
 
-const HubButton = ({ title, url, className, icon, iconClassName }: HubButtonProps ) => {
+const HubButton = ({ title, url, className, icon, iconClassName, badge }: HubButtonProps ) => {
     return (
         <a href={url} className={cn("relative rounded-lg aspect-square block-animation", className)}>
+            {badge && (
+                <span className="absolute top-2 right-2 bg-primary text-black text-[9px] font-bold uppercase tracking-wider px-[6px] py-[2px] rounded-full z-10">
+                    {badge}
+                </span>
+            )}
             <div className="relative pt-4 pl-4">
                 <h2 className="relative text-black h3">{title}</h2>
-                {title === "Quiz" && <p className="text-black text-sm font-bold">Coming soon</p>}
                 <div className={cn("relative rounded-full h-[24px] w-[24px] flex-centering mt-2 bg-black", iconClassName)}>
                     <IconArrowInCircle />
                 </div>

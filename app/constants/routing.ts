@@ -46,6 +46,14 @@ export const MY_PADDOCK_PAGE = "/mon-paddock";
 // QUIZ
 export const QUIZ_PAGE = "/quiz";
 
+// SEASON GAME
+export const SEASON_GAME_PAGE = "/saison";
+export const SEASON_GAME_COMPOSITION_PAGE = "/saison/composition";
+export const SEASON_GAME_STRATEGY_PAGE = (raceUuid: string): string => `/saison/strategie/${raceUuid}`;
+export const SEASON_GAME_RANKING_PAGE = "/saison/classement";
+export const SEASON_GAME_MY_TEAM_PAGE = "/saison/mon-equipe";
+export const SEASON_GAME_PALMARES_PAGE = "/saison/palmares";
+
 // ABOUT
 export const ABOUT_PAGE = "/a-propos";
 export const CGU_PAGE = "/conditions-generales-utilisation";

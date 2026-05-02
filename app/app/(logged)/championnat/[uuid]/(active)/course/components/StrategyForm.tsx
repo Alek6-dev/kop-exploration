@@ -41,11 +41,11 @@ const StrategyForm = ({ playerData, championshipDataUuid, championshipPlayers, r
     const { toast } = useToast();
 
     const savedStrategy: SelectedStrategyArray = {
-        driverGP: playerData.currentStrategy.driver ? playerData.currentStrategy.driver.uuid : "",
-        driverDuel: playerData.currentDuel.driver ? playerData.currentDuel.driver.uuid : "",
-        bonusGP: playerData.currentStrategy.bonusApplication ? playerData.currentStrategy.bonusApplication.bonus.uuid : "",
-        bonusGPTarget: playerData.currentStrategy.bonusApplication ? playerData.currentStrategy.bonusApplication.target.uuid : "",
-        bonusDuel: playerData.currentDuel.bonusApplication ? playerData.currentDuel.bonusApplication.bonus.uuid : "",
+        driverGP: playerData.currentStrategy?.driver ? playerData.currentStrategy.driver.uuid : "",
+        driverDuel: playerData.currentDuel?.driver ? playerData.currentDuel.driver.uuid : "",
+        bonusGP: playerData.currentStrategy?.bonusApplication ? playerData.currentStrategy.bonusApplication.bonus.uuid : "",
+        bonusGPTarget: playerData.currentStrategy?.bonusApplication ? playerData.currentStrategy.bonusApplication.target.uuid : "",
+        bonusDuel: playerData.currentDuel?.bonusApplication ? playerData.currentDuel.bonusApplication.bonus.uuid : "",
     }
 
     //console.log("initial saved strategy :", savedStrategy);
@@ -251,6 +251,7 @@ const StrategyForm = ({ playerData, championshipDataUuid, championshipPlayers, r
                 <SelectBonus uuid={strategy.bonusGP} bonus={selectedGPBonus} bonusTarget={strategy.bonusGPTarget} remainingBudget={playerData.remainingBudget} championshipPlayers={championshipPlayers} connectedPlayerUuid={playerData.uuid} raceStatus={raceStatus} selectedStrategy={strategy} handleStrategy={handleStrategy} type="gp" />
             </Block>
 
+            {playerData.currentDuel && (
             <Block containerClassName={"block-animation " + (raceStatus === 2 && "mb-14") } childClassName="pb-2">
                 <div className="flex items-start justify-between p-4 pb-0">
                     <div className="flex items-center">
@@ -277,6 +278,7 @@ const StrategyForm = ({ playerData, championshipDataUuid, championshipPlayers, r
                 <SelectDriverForm playerData={playerData} championshipDataUuid={championshipDataUuid} raceStatus={raceStatus} selectedStrategy={strategy} handleStrategy={handleStrategy} type="duel" />
                 <SelectBonus uuid={strategy.bonusDuel} bonus={selectedDuelBonus} remainingBudget={playerData.remainingBudget} championshipPlayers={championshipPlayers} connectedPlayerUuid={playerData.uuid} raceStatus={raceStatus} selectedStrategy={strategy} handleStrategy={handleStrategy} type="duel" />
             </Block>
+            )}
 
             {raceStatus === 2 &&
                 <div className="fixed bottom-14 pb-4 pt-4 px-4 bg-gradient-to-t from-black from-85% w-full -ml-4 max-w-[740px]" id="button-submit-strategy">

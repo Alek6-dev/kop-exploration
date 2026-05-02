@@ -6,6 +6,7 @@ namespace App\Admin\Infrastructure\HttpController\Crud;
 
 use App\Admin\Infrastructure\Field\CsvFileField;
 use App\Championship\Application\Command\UpdateChampionshipRaceStatus\UpdateChampionshipRaceStatusCommand;
+use App\SeasonGame\Application\Command\ComputeSeasonGPScores\ComputeSeasonGPScoresCommand;
 use App\Championship\Domain\Enum\ChampionshipRaceStatusEnum;
 use App\Championship\Domain\Model\ChampionshipRaceInterface;
 use App\Championship\Domain\Repository\ChampionshipRaceRepositoryInterface;
@@ -255,6 +256,7 @@ final class ResultCrudController extends AbstractCrudController
                 $entity->getSeason(),
                 $entity->getRace(),
             ));
+            $this->commandBus->dispatch(new ComputeSeasonGPScoresCommand($entity->getRace()->getUuid()));
             $this->addFlash('success', $this->translator->trans(
                 'dashboard.menu.result.crud.success.generate_performance',
                 [
@@ -496,6 +498,7 @@ final class ResultCrudController extends AbstractCrudController
                 }
 
                 $this->entityManager->flush();
+                $this->commandBus->dispatch(new ComputeSeasonGPScoresCommand($race->getUuid()));
             } catch (\Throwable $exception) {
                 $this->addFlash('danger', $exception->getMessage());
                 goto response;

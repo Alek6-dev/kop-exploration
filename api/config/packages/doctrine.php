@@ -111,6 +111,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     'dir' => '%kernel.project_dir%/src/Season/Infrastructure',
                     'prefix' => 'App\Season\Infrastructure',
                 ],
+                'SeasonGame' => [
+                    'is_bundle' => false,
+                    'type' => 'attribute',
+                    'dir' => '%kernel.project_dir%/src/SeasonGame/Infrastructure',
+                    'prefix' => 'App\SeasonGame\Infrastructure',
+                ],
                 'Shared' => [
                     'is_bundle' => false,
                     'type' => 'attribute',

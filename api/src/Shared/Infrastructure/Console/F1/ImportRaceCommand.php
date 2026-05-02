@@ -18,6 +18,7 @@ use App\Result\Infrastructure\Doctrine\Entity\ResultLap;
 use App\Result\Domain\Enum\TypeResultEnum;
 use App\Season\Domain\Repository\SeasonRaceRepositoryInterface;
 use App\Season\Domain\Repository\SeasonRepositoryInterface;
+use App\SeasonGame\Application\Command\ComputeSeasonGPScores\ComputeSeasonGPScoresCommand;
 use App\Shared\Application\Command\CommandBusInterface;
 use App\Team\Domain\Model\TeamInterface;
 use App\Team\Domain\Repository\TeamRepositoryInterface;
@@ -299,6 +300,11 @@ final class ImportRaceCommand extends Command
         }
 
         $this->em->flush();
+
+        $io->section('Season Game scores');
+        $this->commandBus->dispatch(new ComputeSeasonGPScoresCommand($race->getUuid()));
+        $io->text('Season Game scores computed.');
+
         $io->success(sprintf('GP #%d (%s) imported successfully.', $gpNumber, $meetingName));
 
         return Command::SUCCESS;

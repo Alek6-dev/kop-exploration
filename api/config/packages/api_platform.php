@@ -8,6 +8,7 @@ use App\Driver\Domain\Exception\DriverException;
 use App\Parameter\Domain\Exception\ParameterException;
 use App\Player\Domain\Exception\PlayerException;
 use App\Season\Domain\Exception\SeasonException;
+use App\SeasonGame\Domain\Exception\SeasonGameException;
 use App\Shared\Domain\Exception\EmailException;
 use App\Team\Domain\Exception\TeamException;
 use App\User\Domain\Exception\UserVisitorException;
@@ -29,6 +30,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 '%kernel.project_dir%/src/Parameter/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Result/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Season/Infrastructure/ApiPlatform/Resource/',
+                '%kernel.project_dir%/src/SeasonGame/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Strategy/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/Team/Infrastructure/ApiPlatform/Resource/',
                 '%kernel.project_dir%/src/User/Infrastructure/ApiPlatform/Resource/',
@@ -60,6 +62,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ParameterException::class => 400,
             PlayerException::class => 400,
             SeasonException::class => 400,
+            SeasonGameException::class => 400,
             TeamException::class => 400,
             UserVisitorException::class => 400,
         ],

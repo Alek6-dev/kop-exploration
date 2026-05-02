@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
     && apt-get install -y zlib1g-dev libicu-dev g++ libcurl4-openssl-dev libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng-dev libxml2-dev libwebp-dev  libxpm-dev \
-    && apt-get install -y git less subversion unzip wget mariadb-client stow \
+    && apt-get install -y git less subversion unzip wget mariadb-client stow cron \
     && apt-get install -y libxrender1 libfontconfig \
     && apt-get install -y libc6 \
     && apt-get install -y libnss3-dev \

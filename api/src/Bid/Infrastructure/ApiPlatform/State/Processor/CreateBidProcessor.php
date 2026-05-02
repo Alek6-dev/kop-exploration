@@ -9,8 +9,13 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Bid\Application\Command\AddBid\AddBidCommand;
 use App\Bid\Application\Dto\AddBidDto;
 use App\Bid\Domain\Exception\BidException;
+use App\Bid\Infrastructure\Doctrine\Entity\BettingRound;
 use App\Championship\Application\Query\Get\GetChampionshipQuery;
 use App\Championship\Domain\Exception\ChampionshipException;
+use App\Championship\Domain\Model\ChampionshipInterface;
+use App\Championship\Infrastructure\Symfony\Command\ChampionshipAssignAutoCommand;
+use App\Championship\Infrastructure\Symfony\Command\ChampionshipAssignRacesCommand;
+use App\Championship\Infrastructure\Symfony\Command\ChampionshipAssignToPlayerCommand;
 use App\Driver\Application\Query\Get\GetDriverQuery;
 use App\Player\Infrastructure\ApiPlatform\Resource\PlayerResource;
 use App\Shared\Application\Command\CommandBusInterface;
@@ -19,6 +24,8 @@ use App\Team\Application\Query\Get\GetTeamQuery;
 use App\User\Domain\Model\UserVisitorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Webmozart\Assert\Assert;
 
@@ -33,6 +40,9 @@ final readonly class CreateBidProcessor implements ProcessorInterface
         private ValidatorInterface $validator,
         private Security $security,
         private EntityManagerInterface $entityManager,
+        private ChampionshipAssignToPlayerCommand $assignToPlayerCommand,
+        private ChampionshipAssignAutoCommand $assignAutoCommand,
+        private ChampionshipAssignRacesCommand $assignRacesCommand,
     ) {
     }
 
@@ -87,6 +97,39 @@ final readonly class CreateBidProcessor implements ProcessorInterface
         $this->entityManager->persist($bettingRound);
         $this->entityManager->flush();
 
+        if ($this->allPlayersDone($championship)) {
+            $this->assignToPlayerCommand->run(new ArrayInput([]), new NullOutput());
+            $this->assignAutoCommand->run(new ArrayInput([]), new NullOutput());
+            $this->assignRacesCommand->run(new ArrayInput([]), new NullOutput());
+        }
+
         return PlayerResource::fromModel($player);
+    }
+
+    private function allPlayersDone(ChampionshipInterface $championship): bool
+    {
+        foreach ($championship->getPlayers() as $player) {
+            $hasFullSelection = $player->getSelectedDriver1()
+                && $player->getSelectedDriver2()
+                && $player->getSelectedTeam();
+
+            if ($hasFullSelection) {
+                continue;
+            }
+
+            $submitted = (int) $this->entityManager->createQuery(
+                'SELECT COUNT(br.id) FROM App\Bid\Infrastructure\Doctrine\Entity\BettingRound br
+                 WHERE br.player = :player AND br.round = :round'
+            )
+                ->setParameter('player', $player)
+                ->setParameter('round', $championship->getCurrentRound())
+                ->getSingleScalarResult();
+
+            if (0 === $submitted) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

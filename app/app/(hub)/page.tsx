@@ -5,7 +5,7 @@ import { HubButton } from "./_components/hubButton";
 import language from "@/messages/fr";
 import { Container } from "@/components/custom/container";
 import { redirect } from "next/navigation";
-import { CHAMPIONSHIP_LISTING_PAGE, LOGIN_PAGE, MY_PADDOCK_PAGE, QUIZ_PAGE, SHOP_CARS_PAGE, WALLET_PAGE } from "@/constants/routing";
+import { CHAMPIONSHIP_LISTING_PAGE, LOGIN_PAGE, MY_PADDOCK_PAGE, SEASON_GAME_PAGE, SHOP_CARS_PAGE, WALLET_PAGE } from "@/constants/routing";
 import { cookies } from "next/headers";
 
 export default async function Home() {
@@ -73,11 +73,19 @@ export default async function Home() {
 
         <div className="grid grid-cols-2 gap-4 hub-cta">
           <HubButton
+            url={SEASON_GAME_PAGE}
+            title="Saison"
+            className="gradient-white-primary delay-200"
+            icon="podium"
+            iconClassName="svg-primary"
+            badge="Nouveauté"
+          />
+          <HubButton
             url={CHAMPIONSHIP_LISTING_PAGE}
             title={language.hub.championship}
-            className="gradient-white-primary delay-200"
+            className="gradient-white-gray delay-200"
             icon="trophy"
-            iconClassName="svg-primary"
+            iconClassName="svg-white"
           />
           <HubButton
             url={SHOP_CARS_PAGE}
@@ -86,39 +94,13 @@ export default async function Home() {
             icon="store"
             iconClassName="svg-white"
           />
-          {/* <HubButton
-            url=""
-            title={language.hub.quiz}
-            className="gradient-white-gray delay-200"
-            icon="quiz"
-            iconClassName="svg-white"
-          />
-          <HubButton
-            url=""
-            title={language.hub.awards}
-            className="gradient-white-gray delay-200"
-            icon="podium"
-            iconClassName="svg-white"
-          /> */}
           <HubButton
             url={WALLET_PAGE}
             title={language.hub.wallet}
-            className="gradient-white-gray delay-200"
-            icon="wallet"
-            iconClassName="svg-white"
-          />
-
-          <HubButton
-            url={QUIZ_PAGE}
-            title={language.hub.quiz}
             className="gradient-white-primary delay-200"
-            icon="quiz"
+            icon="wallet"
             iconClassName="svg-primary"
           />
-
-          {/* <div className="col-span-2 w-full aspect-[2/1] bg-gray max-h-35 rounded-lg">
-          </div>*/}
-
         </div>
       </Container>
     </main>

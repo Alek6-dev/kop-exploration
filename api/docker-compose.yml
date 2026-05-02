@@ -57,6 +57,25 @@ services:
             - ./config/docker/images/nginx/localhost.crt:/certs/localhost.crt
             - ./config/docker/images/nginx/localhost.key:/certs/localhost.key
 
+    cron:
+        build:
+            context: ./config/docker/images/php-fpm/
+            dockerfile: Dockerfile
+        profiles: [ "linux", "macos" ]
+        volumes:
+            - '.:/var/www/kop'
+            - './config/docker/php.ini:/usr/local/etc/php/conf.d/kop.ini'
+            - './config/docker/kop-crontab:/etc/cron.d/kop'
+        working_dir: /var/www/kop
+        depends_on:
+            - mysql
+        networks:
+            - default
+        environment:
+            LOCAL_USER_ID: $USER_ID
+            APP_ENVIRONNEMENT_DEV: 1
+        entrypoint: [ "bash", "/var/www/kop/config/docker/cron-entrypoint.sh" ]
+
     mailcatcher:
         image: schickling/mailcatcher
         profiles: [ "linux", "macos" ]
